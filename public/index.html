@@ -1,0 +1,52 @@
+<!doctype html>
+<html ng-app="App">
+
+  <head>
+    <link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css">
+    <link rel="stylesheet" href="css/css.css">
+  </head>
+
+  <body layout="column" ng-controller="AppController as vm">
+
+    <md-toolbar layout="row">
+      <div class="md-toolbar-tools">
+        <h1>Kill The Marine - the D00M idle game</h1>
+      </div>
+    </md-toolbar>
+
+    <md-content layout="row" flex right>
+
+      <div layout="column" flex id="content">
+        <ng-include src="'tpl/marine.html'" ng-controller="MarineController"></ng-include>
+      </div>
+
+      <div flex layout="column" class="md-padding">
+        <ng-include src="'tpl/player/scoreboard.html'" ng-controller="PlayerScoreBoard"></ng-include>
+        <ng-include src="'tpl/player/backpack.html'" ng-controller="PlayerBackpack"></ng-include>
+      </div>
+
+      <md-sidenav layout="column" class="md-sidenav-left md-whiteframe-4dp" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')">
+        <md-button class="md-accent">
+          Soldier
+        </md-button>
+        <md-button class="md-accent" disabled>Button 2</md-button>
+      </md-sidenav>
+
+    </md-content>
+
+    <script src="bower_components/underscore/underscore-min.js"></script>
+    <script src="bower_components/angular/angular.min.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.min.js"></script>
+    <script src="bower_components/angular-aria/angular-aria.min.js"></script>
+    <script src="bower_components/angular-material/angular-material.min.js"></script>
+    <script src="bower_components/angular-underscore/angular-underscore.min.js"></script>
+
+    <script src="js/app.js"></script>
+    <script src="js/util.js"></script>
+    <script src="js/marine.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/items.js"></script>
+
+  </body>
+
+</html>

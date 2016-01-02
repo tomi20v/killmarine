@@ -1,0 +1,19 @@
+.md-toolbar-tools h1 {
+    font-size: inherit;
+    font-weight: inherit;
+    margin: inherit;
+}
+
+md-sidenav.md-locked-open {
+    width: 150px !important;
+    min-width: 150px !important;
+    max-width: 150px !important;
+}
+
+#doomguy-container { width: 317px; height: 317px; disaply: block; overflow: hidden; }
+#doomguy-container img {}
+#doomguy-container img:focus { outline: none; }
+.doomguy-container-idle {}
+.doomguy-container-idle img {}
+.doomguy-container-dies {}
+.doomguy-container-dies img { position: relative; left: -93px; top: -183px; margin-right: -93px; }

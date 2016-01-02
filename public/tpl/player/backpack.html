@@ -1,0 +1,16 @@
+
+  <style>
+    .onMax { color: red; }
+  </style>
+
+  <div class="md-padding">
+    <h3>Backpack:</h3>
+    <span layout="row">
+      <dl layout="row" flex ng-class="{ onMax: onMax('clips') }">
+        <dt flex>clip</dt><dd flex>{{ items('clips') }}</dd>
+      </dl>
+      <dl layout="row" flex ng-class="{ onMax: onMax('shells') }">
+        <dt flex>shells</dt><dd flex>{{ items('shells') }}</dd>
+      </dl>
+    </span>
+  </div>

@@ -1,0 +1,9 @@
+{
+  "name": "killmarine",
+  "description": "a doom idle game",
+  "version": "0.0.1",
+  "license": "WTFPL",
+  "dependencies": {
+    "bower": "^1.6.5"
+  }
+}
