@@ -1,5 +1,5 @@
 angular.module('Marine', ['Util'])
-    .service('Marine', function($rootScope) {
+    .service('MarineData', function() {
 
         var data = {
             health: 100,
@@ -7,28 +7,33 @@ angular.module('Marine', ['Util'])
             dies: 0,
             nextLevelDies: 10,
             dieMultiplier: 1.2
-        },
-        logic = {
+        };
+
+        return data;
+
+    })
+    .service('Marine', function($rootScope, MarineData, Util) {
+
+        var logic = {
             onSpawn: function() {
-                data.health = 100;
+                MarineData.health = 100;
             },
             onHit: function() {
                 var damage = 50;
-                data.health -= damage;
-                console.log('HIT for ' + damage);
-                if (data.health <= 0) {
+                MarineData.health -= damage;
+                if (MarineData.health <= 0) {
                     this.dies();
                 }
             },
             dies: function() {
-                data.dies++;
-                if (data.dies >= data.nextLevelDies) {
+                MarineData.dies++;
+                if (MarineData.dies >= MarineData.nextLevelDies) {
                     this.levelUp();
                 }
                 $rootScope.$emit(
                     'Marine.die',
                     {
-                        level: data.level
+                        level: MarineData.level
                     }
                 );
             },
@@ -38,7 +43,7 @@ angular.module('Marine', ['Util'])
         },
         service = {
             data: function(what) {
-                return data[what];
+                return Util.lookUp(MarineData, what);
             }
         };
 

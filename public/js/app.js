@@ -1,14 +1,27 @@
-var app = angular.module('App', ['ngMaterial', 'angular-underscore', 'Marine', 'Player', 'Items'/*, 'Big'*/]);
+var app = angular.module('App', ['ngMaterial', 'angular-underscore', 'Marine', 'Player', 'Items', 'Monsters']);
 
-app.controller('AppController', function($mdSidenav, $scope) {
+app
+    .config(['$provide', function ($provide) {
+        $provide.decorator('$rootScope', function ($delegate) {
+            var _emit = $delegate.$emit;
 
-    var vm = this;
+            $delegate.$emit = function () {
+                console.log('EVENT: ', arguments);
+                _emit.apply(this, arguments);
+            };
 
-    vm.toggleSidenav = function(menuId) {
-        $mdSidenav(menuId).toggle();
-    };
+            return $delegate;
+        });
+    }])
+    .controller('AppController', function($mdSidenav, $scope) {
 
-    angular.merge($scope, {
+        var vm = this;
+
+        vm.toggleSidenav = function(menuId) {
+            $mdSidenav(menuId).toggle();
+        };
+
+        angular.merge($scope, {
+        });
+
     });
-
-});

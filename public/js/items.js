@@ -5,12 +5,16 @@ angular.module('Items', ['Util'])
         },
         backpack = {
             items: {
-                clips: 0,
-                shells: 0
+                clip: 0,
+                shell: 0,
+                rocket: 0,
+                plasma: 0
             },
             max: {
-                clips: 0,
-                shells: 0
+                clip: 0,
+                shell: 0,
+                rocket: 0,
+                plasma: 0
             }
         };
 
@@ -38,8 +42,8 @@ angular.module('Items', ['Util'])
             },
             getRandom: function(level) {
                 var backpack = this.instance();
-                backpack.items.clips = UtilMath.randomInt(10, 10*level);
-                backpack.items.shells = UtilMath.randomInt(2, 2*level);
+                backpack.items.clip = UtilMath.randomInt(10, 10*level);
+                backpack.items.shell = UtilMath.randomInt(2, 2*level);
                 return backpack;
             }
         }
