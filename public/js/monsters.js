@@ -236,41 +236,56 @@ angular.module('Monsters', ['Player'])
     .service('MonstersLogic', function($rootScope, UtilMath, MonstersData, Player) {
 
         return {
-            available: function(id) {
-                return MonstersData.defs[id].available;
+            available: function(monsterId) {
+                return MonstersData.defs[monsterId].available;
             },
-            nextPrice: function(id, cnt) {
-                var owned = MonstersData.owned[id],
-                    price = MonstersData.defs[id].price,
-                    q = MonstersData.defs[id].q;
+            nextPrice: function(monsterId, cnt) {
+                var owned = MonstersData.owned[monsterId],
+                    price = MonstersData.defs[monsterId].price,
+                    q = MonstersData.defs[monsterId].q;
                 return Math.floor(UtilMath.sumGeoSeq(price, q, owned + cnt) - UtilMath.sumGeoSeq(price, q, owned));
             },
-            buy: function(id, cnt) {
+            maxPrice: function(monsterId) {
+                var cnt = this.maxBuyable(monsterId);
+                return this.nextPrice(monsterId, cnt);
+            },
+            maxBuyable: function(monsterId) {
+                var owned = MonstersData.owned[monsterId],
+                    price = MonstersData.defs[monsterId].price,
+                    q = MonstersData.defs[monsterId].q,
+                    ownedPrice = UtilMath.sumGeoSeq(price, q, owned);
+                return UtilMath.seqNBySum(ownedPrice + Player.data.frags, price, q) - owned;
+            },
+            buy: function(monsterId, cnt) {
 
                 var nextPrice;
 
-                if (!this.available(id)) {
+                if (!this.available(monsterId)) {
                     return;
                 }
 
-                nextPrice = this.nextPrice(id, cnt);
+                // if (cnt <= this.mayBuyable(monsterId)){
+                //  this._buy(monsterId, cnt, this.maxPrice());
+                // }
+
+                nextPrice = this.nextPrice(monsterId, cnt);
 
                 if (nextPrice <= Player.data.frags) {
-                    this._buy(id, cnt, nextPrice);
+                    this._buy(monsterId, cnt, nextPrice);
                 }
 
             },
-            _buy: function(id, cnt, price) {
-                var newOwned = MonstersData.owned[id] + cnt;
+            _buy: function(monsterId, cnt, price) {
+                var newOwned = MonstersData.owned[monsterId] + cnt;
 
-                MonstersData.owned[id] = newOwned;
+                MonstersData.owned[monsterId] = newOwned;
                 // max of this monster owned in one game
-                MonstersData._game.owned[id] = Math.max(MonstersData._game.owned[id], newOwned);
+                MonstersData._game.owned[monsterId] = Math.max(MonstersData._game.owned[monsterId], newOwned);
                 // total bought of this monster alltime
-                MonstersData._total.owned[id]+= cnt;
+                MonstersData._total.owned[monsterId]+= cnt;
 
                 $rootScope.$emit('Monster.bought', {
-                    id: id,
+                    id: monsterId,
                     cnt: cnt,
                     frags: price
                 });
@@ -292,12 +307,49 @@ angular.module('Monsters', ['Player'])
     })
     .controller('MonstersController', function($scope, MonstersData, MonstersLogic, PlayerData) {
 
+        var buyStrategy = {
+            maxBuyable: function(monsterId, cnt) {
+                return cnt;
+            },
+            nextPrice: function(monsterId, cnt) {
+                return MonstersLogic.nextPrice(monsterId, cnt);
+            },
+            canBuyNext: function(monsterId, cnt) {
+                var nextPrice = this.nextPrice(monsterId, cnt);
+                return nextPrice && (nextPrice <= PlayerData.frags);
+            },
+            buy: function(monsterId, cnt) {
+                MonstersLogic.buy(monsterId, cnt);
+            }
+        },
+        buyMaxStrategy = angular.extend(angular.copy(buyStrategy), {
+            maxBuyable: function(monsterId, cnt) {
+                return MonstersLogic.maxBuyable(monsterId);
+            },
+            nextPrice: function(monsterId) {
+                return MonstersLogic.maxPrice(monsterId) || MonstersLogic.nextPrice(monsterId, 1);
+            },
+            buy: function(monsterId, cnt) {
+                MonstersLogic.buy(monsterId, this.maxBuyable(monsterId));
+            }
+        });
+
         angular.extend($scope, {
             buyAtOnce: 1,
+            strategy: buyStrategy,
             cycleBuyAtOnce: function() {
-                this.buyAtOnce = this.buyAtOnce < 100
-                    ? this.buyAtOnce * 10
-                    : 1;
+                switch (this.buyAtOnce) {
+                case 100:
+                    this.buyAtOnce = 0;
+                    this.strategy = buyMaxStrategy;
+                    break;
+                case 0:
+                    this.buyAtOnce = 1;
+                    this.strategy = buyStrategy;
+                    break;
+                default:
+                    this.buyAtOnce*= 10;
+                }
             },
             getAvailableMonsters: function() {
                 return MonstersData.defs;
@@ -305,14 +357,17 @@ angular.module('Monsters', ['Player'])
             getOwned: function(monsterId) {
                 return MonstersData.owned[monsterId] || 0;
             },
-            nextPrice: function(monsterId, cnt) {
-                return MonstersLogic.nextPrice(monsterId, cnt);
+            canBuyNext: function(monsterId) {
+                return this.strategy.canBuyNext(monsterId, this.buyAtOnce);
             },
-            buy: function(monsterId, cnt) {
-                MonstersLogic.buy(monsterId, cnt);
+            buy: function(monsterId) {
+                this.strategy.buy(monsterId, this.buyAtOnce);
             },
-            canBuyNext: function(monsterId, cnt) {
-                return MonstersLogic.nextPrice(monsterId, cnt) <= PlayerData.frags;
+            maxBuyable: function(monsterId) {
+                return this.strategy.maxBuyable(monsterId, this.buyAtOnce);
+            },
+            nextPrice: function(monsterId) {
+                return this.strategy.nextPrice(monsterId, this.buyAtOnce);
             }
         });
 

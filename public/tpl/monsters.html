@@ -1,15 +1,15 @@
 <div layout="column">
   <md-button ng-repeat="monster in getAvailableMonsters()"
              class="md-accent" flex
-             ng-disabled="canBuyNext(monster.id)" ng-click="buy(monster.id,buyAtOnce)">
+             ng-disabled="!canBuyNext(monster.id)" ng-click="buy(monster.id)">
     <span style="float: right; font-size: large; font-weight: bold;">({{ getOwned(monster.id) }})</span>
     <span style="ffloat: left;">{{ monster.name }}</span>
     <br/>
-    <span style="fdisplay: block; fclear: both;">{{ buyAtOnce }}x {{ nextPrice(monster.id, buyAtOnce) | BigPrint }}</span>
+    <span style="fdisplay: block; fclear: both;">{{ maxBuyable(monster.id) || 1 }} x {{ nextPrice(monster.id) | BigPrint }}</span>
   </md-button>
 
   <md-button class="md-accent" flex ng-click="cycleBuyAtOnce()">
-    <div style="text-align: center;">buy {{ buyAtOnce }}</div>
+    <div style="text-align: center;">buy {{ buyAtOnce ? buyAtOnce : 'MAX' }}</div>
   </md-button>
 
 </div>

@@ -78,6 +78,11 @@ angular.module('Util', [])
             },
             sumGeoSeqFloor: function(a1, q, n) {
                 return Math.floor(this.sumGeoSeq(a1, q, n));
+            },
+            seqNBySum: function(sum, a1, q) {
+                return Math.floor(
+                    Math.log(1 - (1 - q) * sum / a1) / Math.log(q)
+                );
             }
         }
 
