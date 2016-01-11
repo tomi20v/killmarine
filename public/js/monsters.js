@@ -4,15 +4,17 @@ angular.module('Monsters', ['Player'])
             zomb: {
                 name: 'Zombieman',
                 id: 'zomb',
-                price: 2,
+                price: 5,
                 q: 1.03,
                 fps: {
-                    hit: 2,
-                    shoot: 5
+                    hit: 1,
+                    shoot: 2
                 },
+                backpackLevel: 1,
                 ammo: 'clip',
                 aps: 1,
-                available: true
+                available: true,
+                tags: ['all', 'zomb']
             },
             sarg: {
                 name: 'Sargeant',
@@ -20,12 +22,14 @@ angular.module('Monsters', ['Player'])
                 price: 20,
                 q: 1.04,
                 fps: {
-                    hit: 5,
-                    shoot: 45
+                    hit: 1,
+                    shoot: 4
                 },
+                backpackLevel: 1,
                 ammo: 'shell',
                 aps: 1,
-                available: true
+                available: true,
+                tags: ['all', 'sarg']
             },
             cmmd: {
                 name: 'Commando',
@@ -33,12 +37,14 @@ angular.module('Monsters', ['Player'])
                 price: 70,
                 q: 1.06,
                 fps: {
-                    hit: 5,
-                    shoot: 116
+                    hit: 1,
+                    shoot: 10
                 },
+                backpackLevel: 1,
                 ammo: 'clip',
                 aps: 3,
-                available: false
+                available: false,
+                tags: ['all', 'cmmd']
             },
 
             imp: {
@@ -47,12 +53,14 @@ angular.module('Monsters', ['Player'])
                 price: 30,
                 q: 1.08,
                 fps: {
-                    hit: 24,
-                    shoot: 24
+                    hit: 2,
+                    shoot: 10
                 },
+                backpackLevel: 1,
                 ammo: 'rocket',
                 aps: 1,
-                available: true
+                available: true,
+                tags: ['all', 'imp']
             },
             manc: {
                 name: 'Mancubus',
@@ -63,8 +71,10 @@ angular.module('Monsters', ['Player'])
                     hit: 24,
                     shoot: 64
                 },
+                backpackLevel: 1,
                 ammo: 'rocket',
-                available: false
+                available: false,
+                tags: ['all', 'manc']
             },
             rev: {
                 name: 'Revenant',
@@ -75,8 +85,10 @@ angular.module('Monsters', ['Player'])
                     hit: 10,
                     shoot: 80
                 },
+                backpackLevel: 1,
                 ammo: 'rocket',
-                available: false
+                available: false,
+                tags: ['all', 'rev']
             },
 
             caco: {
@@ -88,8 +100,10 @@ angular.module('Monsters', ['Player'])
                     hit: 10,
                     shoot: 40
                 },
+                backpackLevel: 1,
                 ammo: 'rocket',
-                available: false
+                available: false,
+                tags: ['all', 'caco']
             },
             hell: {
                 name: 'Hell Knight',
@@ -100,9 +114,11 @@ angular.module('Monsters', ['Player'])
                     hit: 10,
                     shoot: 64
                 },
+                backpackLevel: 1,
                 ammo: 'rocket',
                 aps: 1,
-                available: false
+                available: false,
+                tags: ['all', 'hell']
             },
             baro: {
                 name: 'Baron of hell',
@@ -112,8 +128,10 @@ angular.module('Monsters', ['Player'])
                     hit: 10,
                     shoot: 80
                 },
+                backpackLevel: 1,
                 ammo: 'rocket',
-                available: false
+                available: false,
+                tags: ['all', 'baro']
             },
 
             demn: {
@@ -125,9 +143,11 @@ angular.module('Monsters', ['Player'])
                     hit: 40,
                     shoot: null
                 },
+                backpackLevel: 1,
                 ammo: null,
                 aps: null,
-                available: false
+                available: false,
+                tags: ['all', 'demn']
             },
             lost: {
                 name: 'Lost Soul',
@@ -138,9 +158,11 @@ angular.module('Monsters', ['Player'])
                     hit: 24,
                     shoot: null
                 },
+                backpackLevel: 1,
                 ammo: null,
                 aps: null,
-                available: false
+                available: false,
+                tags: ['all', 'lost']
             },
             arch: {
                 name: 'Arch-Vile',
@@ -151,8 +173,10 @@ angular.module('Monsters', ['Player'])
                     hit: 20,
                     shoot: 70
                 },
+                backpackLevel: 1,
                 ammo: null,
-                available: false
+                available: false,
+                tags: ['all', 'arch']
             },
 
             spdm: {
@@ -164,8 +188,10 @@ angular.module('Monsters', ['Player'])
                     hit: 0,
                     shoot: 650
                 },
+                backpackLevel: 1,
                 ammo: 'plasma',
-                available: false
+                available: false,
+                tags: ['all', 'spdm']
             },
             artr: {
                 name: 'Arachnotron',
@@ -176,9 +202,11 @@ angular.module('Monsters', ['Player'])
                     hit: 5,
                     shoot: 40
                 },
+                backpackLevel: 1,
                 ammo: 'plasma',
                 aps: 1,
-                available: false
+                available: false,
+                tags: ['all', 'artr']
             },
             cybd: {
                 name: 'Cyberdemon',
@@ -189,8 +217,10 @@ angular.module('Monsters', ['Player'])
                     hit: 0,
                     shoot: 800
                 },
+                backpackLevel: 1,
                 ammo: 'plasma',
-                available: false
+                available: false,
+                tags: ['all', 'cybd']
             },
 
             icon: {
@@ -201,9 +231,11 @@ angular.module('Monsters', ['Player'])
                     hit: 0,
                     shoot: 0
                 },
+                backpackLevel: 1,
                 ammo: null,
                 aps: null,
-                available: false
+                available: false,
+                tags: ['all', 'icon']
             }
         },
         available: {
@@ -216,6 +248,16 @@ angular.module('Monsters', ['Player'])
             owned: {},
             // these are cached values, no need to save unless plan changes
             defs: {}
+        },
+        monsterBuilder = function(monster) {
+            var price = monster.price,
+                q = monster.q;
+            angular.extend(monster, {
+                price: function() { return price; },
+                q: function() { return q; },
+                owned: function() { return data.owned[this.id]}
+            });
+            return monster;
         };
 
         angular.forEach(MonstersDef.monsters, function(monster) {
@@ -224,10 +266,11 @@ angular.module('Monsters', ['Player'])
 
         angular.forEach(MonstersDef.monsters, function(monster, monsterId) {
             if (monster.available) {
-                data.defs[monsterId] = angular.copy(monster);
+                data.defs[monsterId] = monsterBuilder(angular.copy(monster));
             }
         });
-
+data.owned.zomb = 1;
+data.owned.sarg = 1;
         UtilBoot.prepareData(data, ['owned']);
 
         return data;
@@ -241,8 +284,8 @@ angular.module('Monsters', ['Player'])
             },
             nextPrice: function(monsterId, cnt) {
                 var owned = MonstersData.owned[monsterId],
-                    price = MonstersData.defs[monsterId].price,
-                    q = MonstersData.defs[monsterId].q;
+                    price = MonstersData.defs[monsterId].price(),
+                    q = MonstersData.defs[monsterId].q();
                 return Math.floor(UtilMath.sumGeoSeq(price, q, owned + cnt) - UtilMath.sumGeoSeq(price, q, owned));
             },
             maxPrice: function(monsterId) {
@@ -251,8 +294,8 @@ angular.module('Monsters', ['Player'])
             },
             maxBuyable: function(monsterId) {
                 var owned = MonstersData.owned[monsterId],
-                    price = MonstersData.defs[monsterId].price,
-                    q = MonstersData.defs[monsterId].q,
+                    price = MonstersData.defs[monsterId].price(),
+                    q = MonstersData.defs[monsterId].q(),
                     ownedPrice = UtilMath.sumGeoSeq(price, q, owned);
                 return UtilMath.seqNBySum(ownedPrice + Player.data.frags, price, q) - owned;
             },
@@ -293,17 +336,36 @@ angular.module('Monsters', ['Player'])
         };
 
     })
-    .service('Monster', function(Util, MonstersDef, MonstersData) {
+    .service('Monsters', function($timeout, Util, MonstersDef, MonstersData) {
 
         return {
             data: angular.bind(Util.lookUp, MonstersData),
-            monster: function(id) {
-                return angular.filter(MonstersDef.monsters, function(monster) {
-                    return monster.id == id;
-                }).pop();
+            //monster: function(id) {
+            //    return angular.filter(MonstersDef.monsters, function(monster) {
+            //        return monster.id == id;
+            //    }).pop();
+            //},
+            registerMod: function(event, data) {
+                console.log('REGISTER: ', data);
+                angular.forEach(MonstersData.defs, function(monster) {
+                    // @todo filter here
+                    var oldFn = monster[data.path];
+                    // @todo convert to empty returner fn if not function
+                    monster[data.path] = function() {
+                        return data.fn(oldFn);
+                    };
+                    if (data.timeout) {
+                        $timeout(function () {
+                            monster[data.path] = oldFn;
+                        }, data.timeout);
+                    }
+                })
             }
         };
 
+    })
+    .run(function($rootScope, Monsters) {
+        $rootScope.$on('Monsters.registerMod', angular.bind(Monsters, Monsters.registerMod));
     })
     .controller('MonstersController', function($scope, MonstersData, MonstersLogic, PlayerData) {
 
@@ -355,7 +417,7 @@ angular.module('Monsters', ['Player'])
                 return MonstersData.defs;
             },
             getOwned: function(monsterId) {
-                return MonstersData.owned[monsterId] || 0;
+                return MonstersData.defs[monsterId].owned() || 0;
             },
             canBuyNext: function(monsterId) {
                 return this.strategy.canBuyNext(monsterId, this.buyAtOnce);

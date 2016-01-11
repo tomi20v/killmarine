@@ -1,4 +1,4 @@
-angular.module('Player', ['Items', 'Util', 'BigNum'])
+angular.module('Player', ['Items', 'Util', 'BigNum', 'Monsters', 'Ticker'])
     .service('PlayerData', function(Util, UtilBoot, ItemsBackpack) {
 
         var data = {
@@ -61,11 +61,6 @@ angular.module('Player', ['Items', 'Util', 'BigNum'])
         };
 
     })
-    .run(function($rootScope, PlayerLogic) {
-        $rootScope.$on('Marine.die', angular.bind(PlayerLogic, PlayerLogic.onMarineDie));
-        $rootScope.$on('Monster.bought', angular.bind(PlayerLogic, PlayerLogic.onMonsterBuy));
-
-    })
     .service('Player', function(UtilBoot, PlayerData) {
 
         var service= {
@@ -77,7 +72,7 @@ angular.module('Player', ['Items', 'Util', 'BigNum'])
         return service;
 
     })
-    .controller('PlayerScoreBoard', function($scope, Util, PlayerData) {
+    .controller('PlayerScoreBoard', function($scope, $rootScope, $timeout, Util, UtilConfig, PlayerData, MonstersData, Ticker) {
 
         angular.merge($scope, {
             data: function(what) {
@@ -85,6 +80,30 @@ angular.module('Player', ['Items', 'Util', 'BigNum'])
             },
             cheat: function() {
                 PlayerData.frags *= 123;
+            },
+            burn: function() {
+                $rootScope.$emit('Monsters.registerMod', {
+                    filter: function(monster) {
+                        return true;
+                    },
+                    path: 'price',
+                    fn: function(oldFn) {
+                        return 0.1 * oldFn();
+                    },
+                    timeout: 2000
+                });
+            },
+            tick: function() {
+                Ticker();
+            },
+            paused: function() {
+                return UtilConfig.paused;
+            },
+            pause: function() {
+                $rootScope.$emit('Game.pause');
+            },
+            resume: function() {
+                $rootScope.$emit('Game.resume');
             }
         });
 
@@ -104,5 +123,9 @@ angular.module('Player', ['Items', 'Util', 'BigNum'])
             }
         });
 
+    })
+    .run(function($rootScope, PlayerLogic) {
+        $rootScope.$on('Marine.die', angular.bind(PlayerLogic, PlayerLogic.onMarineDie));
+        $rootScope.$on('Monster.bought', angular.bind(PlayerLogic, PlayerLogic.onMonsterBuy));
     })
 ;

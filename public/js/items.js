@@ -25,9 +25,12 @@ angular.module('Items', ['Util'])
             add: function(to, what) {
 
                 var clipped = angular.copy(what);
+                clipped.clipped = false;
 
                 angular.forEach(to.max, function(max, i) {
-                    var maxClipped = max - to.items[i];
+                    var maxClipped = max > 0
+                        ? max - to.items[i]
+                        : clipped.items[i];
                     if (clipped.items[i] > maxClipped) {
                         clipped.items[i] = maxClipped;
                         clipped.clipped = true;
@@ -40,10 +43,17 @@ angular.module('Items', ['Util'])
 
                 return clipped;
             },
+            mul: function(what, mul) {
+                var clipped = angular.copy(what);
+                angular.forEach(what.items, function(cnt, i) {
+                    var max = what.max[i];
+                    what.items[i] = Math.min(what.items[i] * mul, max);
+                });
+            },
             getRandom: function(level) {
                 var backpack = this.instance();
-                backpack.items.clip = UtilMath.randomInt(10, 10*level);
-                backpack.items.shell = UtilMath.randomInt(2, 2*level);
+                backpack.items.clip = UtilMath.randomInt(0, Math.pow(1.1, level));
+                backpack.items.shell = UtilMath.randomInt(0, Math.pow(1.2, level));
                 return backpack;
             }
         }

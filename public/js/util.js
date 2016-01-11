@@ -123,6 +123,7 @@ angular.module('Util', [])
     })
     .service('UtilConfig', function() {
         return {
+            pause: false,
             config: {
                 notation: 1
             },
