@@ -1,5 +1,6 @@
 import {Component, Inject} from 'angular2/core';
 import {Dispatcher} from "../dispatcher";
+import {GameData} from "../game";
 
 class MarineData {
     health: number = 100;
@@ -61,11 +62,14 @@ export class MarineComponent {
     private data: MarineData = new MarineData();
     private state: MarineState;
     private dispatcher: Dispatcher;
+    private gameData: GameData;
     constructor(
-        @Inject(Dispatcher) dispatcher: Dispatcher
+        @Inject(Dispatcher) dispatcher: Dispatcher,
+        @Inject(GameData) gameData: GameData
     ) {
         this.dispatcher = dispatcher;
         this.state = new MarineState(dispatcher);
+        this.gameData = gameData;
         this.dispatcher.subscribeBound('marine.spawn', this, this.spawnHandler);
         this.dispatcher.subscribeBound('marine.die', this.state, this.state.dieHandler);
     }

@@ -1,4 +1,7 @@
 <style>
+	.doomguy-container {
+		padding-top: 15px;
+	}
 	.doomguy-container-idle img {
 		width: 103%;
 	}
@@ -18,8 +21,7 @@
 	}
 </style>
 
-<div>health: {{data.health}}</div>
-<div class="full doomguy-container-{{ state.state | lowercase }}"
+<div class="full doomguy-container doomguy-container-{{ state.state | lowercase }}"
 	 style="overflow: hidden;">
 	<img #imgEl src="app/marine/asset/state-{{ state.state | lowercase }}.gif"
 		 (click)="clickHandler()"
@@ -35,6 +37,9 @@
 		</div>
 	</div>
 </div>
+<div>health: {{data.health}}</div>
 <div>state: {{state.state}}</div>
 <button (click)="clickHandler()" class="full">-= MARINE HERE!!1 =-</button>
-<br/><br/><br/>
+<br/>
+Frags total: {{ gameData.tops.sum.frags }}
+<br/><br/>

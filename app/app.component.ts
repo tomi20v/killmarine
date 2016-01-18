@@ -1,7 +1,6 @@
 import {Component} from 'angular2/core';
 import {MarineComponent} from './marine/marine';
-import {ScoreboardComponent} from './scoreboard.component';
-import {ScoreboardComponent} from "./scoreboard.component";
+import {ScoreboardComponent} from './scoreboard/scoreboard.component';
 
 interface ConfigInterface {
     running: boolean,
@@ -23,8 +22,10 @@ export class AppComponent {
         running: false,
         notation: 2
     };
+    private tabsActive: string = 'scoreboard';
     constructor() {
         console.log('OK', this);
 
     }
+
 }
