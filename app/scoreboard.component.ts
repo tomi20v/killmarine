@@ -15,6 +15,6 @@ export class ScoreboardComponent {
         this.dispatcher.subscribeBound('marine.die', this, this.marineDieHandler);
     }
     protected marineDieHandler(eventData) {
-        console.log('d', eventData);
+        console.log('scoreboard die', eventData);
     }
 }

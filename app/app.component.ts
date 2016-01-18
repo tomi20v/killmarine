@@ -1,6 +1,7 @@
 import {Component} from 'angular2/core';
 import {MarineComponent} from './marine/marine';
 import {ScoreboardComponent} from './scoreboard.component';
+import {ScoreboardComponent} from "./scoreboard.component";
 
 interface ConfigInterface {
     running: boolean,
@@ -9,11 +10,7 @@ interface ConfigInterface {
 
 @Component({
     selector: 'app',
-    template: `
-    <h1>fckitol</h1>
-    <marine #asd id="asdid"></marine>
-    <scoreboard #bsd id="bsdid"></scoreboard>
-    `,
+    templateUrl: 'app/app.tpl',
     directives: [
         MarineComponent,
         ScoreboardComponent

@@ -1,4 +1,4 @@
-import {Component,Inject} from 'angular2/core';
+import {Component, Inject} from 'angular2/core';
 import {Dispatcher} from "../dispatcher";
 
 class MarineData {
@@ -21,7 +21,7 @@ class MarineState {
         this.dispatcher = dispatcher;
     };
 
-    public checkChange = function() {
+    public checkChange() {
         if (this.nextStateChange && this.nextStateChange < new Date().getTime()) {
             this.state = this.nextState;
             this.stateChanged = this.nextStateChange;
@@ -31,21 +31,24 @@ class MarineState {
             }
         }
     };
-    public timeoutState = function(newState, timeout, callback) {
+    public timeoutState(newState, timeout, callback) {
+        var othis = this;
         this.nextState = this.state;
         this.state = newState;
         this.stateChanged = new Date().getTime();
         this.nextStateChange = this.stateChanged + timeout;
         this.nextStateCallback = callback;
-        //$timeout(checkChange, timeout);
-        //$timeout(checkChange, timeout+500);
-        //setTimeout(this.checkChange, timeout);
-        //setTimeout(this.checkChange, timeout+500);
+        setTimeout(this.getCheckChangeCallback(), timeout);
+        setTimeout(function() { othis.checkChange.apply(othis) }, timeout+500);
     };
-    public dies = function() {
+    public dieHandler() {
         this.timeoutState('DIES', 1400, function(){
             this.dispatcher.emit('marine.spawn');
         });
+    }
+    private getCheckChangeCallback() {
+        var othis = this;
+        return function() { othis.checkChange.apply(othis) }
     }
 }
 
@@ -64,8 +67,12 @@ export class MarineComponent {
         this.dispatcher = dispatcher;
         this.state = new MarineState(dispatcher);
         this.dispatcher.subscribeBound('marine.spawn', this, this.spawnHandler);
+        this.dispatcher.subscribeBound('marine.die', this.state, this.state.dieHandler);
     }
     public clickHandler(eventData: any) {
+        if (this.state.state != 'IDLE') {
+            return;
+        }
         var damage = 50;
         this.data.health-= damage;
         if (this.data.health <= 0) {
@@ -81,5 +88,18 @@ export class MarineComponent {
         this.dispatcher.emit('marine.die', {
             level: this.data.level
         });
+    }
+    /** shall return proper top offset based on current image size */
+    private getMarineTop(currentWidth) {
+        switch (this.state.state) {
+            case 'DIES':
+                return (-0.37*currentWidth) + "px";
+            case 'IDLE':
+            default:
+                return '';
+        }
+    }
+    private showHealthBar() {
+        return this.state.state == 'IDLE';
     }
 }
