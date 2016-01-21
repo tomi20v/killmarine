@@ -1,0 +1,13 @@
+<ul class="list-group">
+  <li class="list-group-item">
+    <button *ngFor="#monsterId of availableMonsters"
+            [disabled]="!canBuyNext(monsterId)"
+            (click)="buy(monsterId)">
+      <span class="owned">{{ owned(monsterId) }} </span>
+      <span class="name" >{{ monster(monsterId).name }}</span>
+      <span class="buy">{{ maxBuyable(monsterId) || 1 }} x {{ nextPrice(monsterId) }}</span>
+    </button>
+  </li>
+</ul>
+
+<button (click)="cycleBuyAtOnce()">BUY {{ buyAtOnce }}</button>

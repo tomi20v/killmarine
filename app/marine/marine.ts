@@ -55,7 +55,7 @@ class MarineState {
 
 @Component({
     selector: 'marine',
-    templateUrl: 'app/marine/marine.tpl'
+    templateUrl: 'app/marine/asset/marine.html'
 })
 
 export class MarineComponent {

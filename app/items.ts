@@ -1,4 +1,4 @@
-class BackpackItems {
+export class BackpackItems {
     public clip: number = 0;
     public shell: number = 0;
     public rocket: number = 0;
@@ -6,8 +6,8 @@ class BackpackItems {
     public slug: number = 0;
 }
 export class Backpack {
-    public items: BackpackItems;
-    public limit: BackpackItems;
+    public items: BackpackItems = new BackpackItems();
+    public limit: BackpackItems = new BackpackItems();
 }
 
 export class BackpackLogic {

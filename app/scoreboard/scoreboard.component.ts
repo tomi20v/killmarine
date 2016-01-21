@@ -4,7 +4,7 @@ import {GameData} from "./../game";
 
 @Component({
     selector: 'scoreboard',
-    templateUrl: 'app/scoreboard/scoreboard.tpl'
+    templateUrl: 'app/scoreboard/asset/scoreboard.html'
 })
 
 export class ScoreboardComponent {

@@ -1,6 +1,8 @@
 import {Component} from 'angular2/core';
 import {MarineComponent} from './marine/marine';
 import {ScoreboardComponent} from './scoreboard/scoreboard.component';
+import {Backpack} from './items';
+import {MonstersComponent} from "./monsters/monsters.component";
 
 interface ConfigInterface {
     running: boolean,
@@ -9,10 +11,11 @@ interface ConfigInterface {
 
 @Component({
     selector: 'app',
-    templateUrl: 'app/app.tpl',
+    templateUrl: 'app/asset/app.html',
     directives: [
         MarineComponent,
-        ScoreboardComponent
+        ScoreboardComponent,
+        MonstersComponent
     ]
 })
 
@@ -22,10 +25,17 @@ export class AppComponent {
         running: false,
         notation: 2
     };
-    private tabsActive: string = 'scoreboard';
+    public tabsActive: string = 'scoreboard';
     constructor() {
         console.log('OK', this);
 
+    }
+
+    private tabActive(tab: string) {
+        return this.tabsActive == tab;
+    }
+    private setTab(tab: string) {
+        this.tabsActive = tab;
     }
 
 }

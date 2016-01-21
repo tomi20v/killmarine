@@ -2,21 +2,23 @@ import {Injectable, Inject} from 'angular2/core';
 import {Backpack, BackpackLogic} from './items';
 import {Tick} from './ticker';
 import {Dispatcher} from "./dispatcher";
+import {MonstersDef} from "./monsters/monsters.def";
 
 class Game {
     public frags: number = 0;
     public backpack: Backpack = new Backpack();
+    public monsters: Object = MonstersDef.getRegistry();
 }
-class GameMS {
+class GameTS {
     public top: Game = new Game();
     public sum: Game = new Game();
 }
 @Injectable()
 export class GameData {
 
-    private game: Game = new Game();
-    private total: GameMS = new GameMS();
-    private tops: GameMS = new GameMS();
+    public game: Game = new Game();
+    public total: GameTS = new GameTS();
+    public tops: GameTS = new GameTS();
 
     public tick: Tick;
     public lastTick: Tick;

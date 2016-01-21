@@ -1,0 +1,45 @@
+<style>
+	monsters#monsters {
+		display: block;
+		padding-top: 1em;
+	}
+</style>
+<div class="container">
+	<div class="row">
+		<div class="col-left col-md-3 col-xs-6">
+			<ul class="nav nav-tabs nav-justified">
+				<li role="presentation"><a href="#">&nbsp;</a></li>
+			</ul>
+			<marine></marine>
+		</div>
+
+		<div class="col-mid mid-tabs col-md-6">
+			<ul class="mid-tabs-nav nav nav-tabs nav-justified">
+				<li role="presentation" [class.active]="tabActive('motd')">
+					<a href="#" (click)="setTab('motd')">Motd</a>
+				</li>
+				<li role="presentation" [class.active]="tabActive('scoreboard')">
+					<a href="#" (click)="setTab('scoreboard')">Scoreboard</a>
+				</li>
+				<li role="presentation" [class.active]="tabActive('upgrades')">
+					<a href="#" (click)="setTab('upgrades')">Upgrades</a>
+				</li>
+				<li role="presentation" [class.active]="tabActive('servers')">
+					<a href="#" (click)="setTab('servers')">Servers</a>
+				</li>
+			</ul>
+			<div id="mid-tabs-tabs">
+				<div *ngIf="tabActive('motd')">
+					MOTD here
+				</div>
+				<scoreboard *ngIf="tabActive('scoreboard')"></scoreboard>
+			</div>
+		</div>
+		<div class="col-right col-md-3">
+			<ul class="nav nav-tabs nav-justified">
+				<li role="presentation"><a href="#">Monsters</a></li>
+			</ul>
+			<monsters id="monsters"></monsters>
+		</div>
+	</div>
+</div>
