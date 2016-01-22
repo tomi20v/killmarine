@@ -1,0 +1,28 @@
+/* MarineController */
+.doomguy-container {
+    overflow: hidden;
+    padding-top: 15px;
+}
+.doomguy-container img { }
+.doomguy-container img:focus { }
+.doomguy-container.state-idle {
+    width: 103%;
+}
+.doomguy-container.state-idle img { }
+.doomguy-container.state-dies {
+}
+.doomguy-container.state-dies img {
+    width: 158%;
+    position: relative;
+    left: -24%;
+    margin-right: -24%;
+}
+
+.progress-container {
+    position: relative;
+    width: 90%;
+    left: 5%;
+    top: -28px;
+}
+
+.md-button { }

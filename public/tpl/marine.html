@@ -1,9 +1,0 @@
-
-  <div style="width: 307px; height: 20px; background: #000; padding: 5px; display: block;">
-    <div ng-style="{width: getHealth() + '%', background: 'red', height: '20px', float: 'left'}"></div>
-    <div style="position: relative; top: -20px; clear: left; color: white; ">Marine Level {{ getLevel() }}</div>
-  </div>
-
-  <div id="doomguy-container" class="doomguy-container-{{ getState() | lowercase }}">
-    <img src="css/doomguy/state-{{ getState() | lowercase }}.gif" ng-click="hit()" />
-  </div>
