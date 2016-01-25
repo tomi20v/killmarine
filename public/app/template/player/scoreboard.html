@@ -1,0 +1,56 @@
+<div class="scoreboard-container">
+  <ul class="list-group">
+    <li class="list-group-item active hdr">
+      <span class="c0">&nbsp;</span>
+      <span class="cs">&nbsp;</span>
+      <span class="c2 bl">this&nbsp;game</span>
+      <span class="c2 bl">alltime</span>
+    </li>
+    <li class="list-group-item active hdr2">
+      <span class="c0">&nbsp;</span>
+      <span class="cs">&nbsp;</span>
+      <span class="cs bl">max</span>
+      <span class="cs bl">gained</span>
+      <span class="cs bl">max</span>
+      <span class="cs bl">gained</span>
+    </li>
+    <li class="list-group-item">
+      <span class="c0">Frags:</span>
+      <span class="cs pre">{{ player('frags') | BigPrint }}</span>
+      <span class="cs pre">{{ player('tops.game.top.frags') | BigPrint }}</span>
+      <span class="cs pre">{{ player('tops.game.sum.frags') | BigPrint }}</span>
+      <span class="cs pre">{{ player('tops.total.top.frags') | BigPrint }}</span>
+      <span class="cs pre">{{ player('tops.total.sum.frags') | BigPrint }}</span>
+    </li>
+    <li class="list-group-item active">
+      <span class="c0">&nbsp;</span>
+      <span class="cs">&nbsp;</span>
+      <span class="c2 bl">this&nbsp;game</span>
+      <span class="c2 bl">alltime</span>
+    </li>
+    <li class="list-group-item">
+      <span class="c0">Monsters:</span>
+      <span class="cs pre">{{ monsters('ownedAll') | BigPrint }}</span>
+      <span class="c2 pre">{{ monsters('tops.game.ownedAll') | BigPrint }}</span>
+      <span class="c2 pre">{{ monsters('tops.total.ownedAll') | BigPrint }}</span>
+    </li>
+    <li class="list-group-item active">
+      <span class="c0">&nbsp;</span>
+      <span class="cs">&nbsp;</span>
+      <span class="c2 bl">this&nbsp;game</span>
+      <span class="c2 bl">alltime</span>
+    </li>
+    <li class="list-group-item">
+      <span class="c0">Clicks:</span>
+      <span class="cs pre">{{ meta('clicks') | BigPrint }}</span>
+      <span class="c2 pre">{{ meta('tops.game.clicks') | BigPrint }}</span>
+      <span class="c2 pre">{{ meta('tops.total.clicks') | BigPrint }}</span>
+    </li>
+    <li class="list-group-item">
+      <span class="c0">Useful clicks:</span>
+      <span class="cs pre">{{ meta('usefulClicks') | BigPrint }}</span>
+      <span class="c2 pre">{{ meta('tops.game.usefulClicks') | BigPrint }}</span>
+      <span class="c2 pre">{{ meta('tops.total.usefulClicks') | BigPrint }}</span>
+    </li>
+  </ul>
+</div>

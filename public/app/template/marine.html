@@ -1,0 +1,22 @@
+  <div class="full doomguy-container state-{{ getState() | lowercase }}">
+    <img ng-src="asset/doomguy/state-{{ getState() | lowercase }}.gif"
+         ng-click="hit()"
+         ng-class="doomguy-img-{{ getState() | lowercase }}"
+         ng-style="{top: getMarineTop(imgEl.offsetWidth)}"
+         marine-top-offset />
+    <div class="progress-container" ng-if="1||showHealthBar()">
+      <div class="progress marine-health-bar full">
+        <div role="progressbar"
+             class="progress-bar progress-bar-danger progress-bar-striped"
+             ng-style="{width: getHealth() + '%'}">
+          Marine lvl {{ getLevel() }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>health: {{ getHealth() }}</div>
+  <div>state: {{ getState() }}</div>
+  <button ng-click="clickHandler()" class="full">-= MARINE HERE!!1 =-</button>
+  <br/>
+  Frags total: {{ gameData.tops.sum.frags }}
+  <br/><br/>

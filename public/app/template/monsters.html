@@ -1,0 +1,15 @@
+<div class="btn-group-vertical monsters-container" role="group">
+  <button ng-repeat="monster in getAvailableMonsters()"
+          ng-disabled="!canBuyNext(monster.id)"
+          ng-click="buy(monster.id)"
+          type="button"
+          class="full btn btn-primary">
+    <span class="name pull-left">{{ monster.name }}</span>
+    <span class="owned badge pull-right">{{ getOwned(monster.id) }}</span>
+    <span class="buy pull-left">buy {{ maxBuyable(monster.id) || 1 }} for {{ nextPrice(monster.id) | BigPrint }}</span>
+  </button>
+</div>
+
+<button class="cycle half center-block btn btn-info" ng-click="cycleBuyAtOnce()">
+  BUY<span class="badge pull-right">{{ buyAtOnce }}</span>
+</button>

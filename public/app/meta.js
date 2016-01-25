@@ -35,16 +35,17 @@ angular.module('Meta', ['Util'])
     .service('MetaLogic', function(MetaData) {
 
         return {
-            onClick: function(event, eventData){
+            onUsefulClick: function(){
+                MetaData.topsAdd('usefulClicks', 1);
+            },
+            onClick: function () {
                 MetaData.topsAdd('clicks', 1);
-                if (eventData) {
-                    MetaData.topsAdd('usefulClicks', 1);
-                }
             }
         }
 
     })
-    .run(function($rootScope, MetaLogic) {
-        $rootScope.$on('Meta.click', angular.bind(MetaLogic, MetaLogic.onClick));
+    .run(function($rootScope, $document, MetaLogic) {
+        $rootScope.$on('Meta.usefulClick', angular.bind(MetaLogic, MetaLogic.onUsefulClick));
+        $document.on('click', angular.bind(MetaLogic, MetaLogic.onClick));
     })
 ;
