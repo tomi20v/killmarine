@@ -1,3 +1,14 @@
+.full { width: 100%; }
+.half { width: 50%; }
+
+/** AppController */
+#header-cycle-buy {
+    margin-top: -0.5em;
+}
+.btn:focus {
+    color: #fc8 !important;
+}
+
 /* MarineController */
 .doomguy-container {
     overflow: hidden;
@@ -25,4 +36,64 @@
     top: -28px;
 }
 
-.md-button { }
+/* MonstersController */
+.monsters-container {
+    width: 90%;
+    margin: 1em 4% 1em 5%;
+}
+
+.monsters-container .btn .name {
+    clear: none;
+    font-size: 125%;
+}
+.monsters-container .btn .buy {
+    clear: left;
+    font-size: 75%;
+}
+.monsters-container .btn .owned {
+    font-size: 150%;
+}
+#monsters .btn.cycle .badge {
+    top: 0;
+}
+
+/** scoreboard */
+.scoreboard-container {
+    padding-top: 1em;
+}
+.scoreboard-container .list-group-item {
+    overflow: auto;
+}
+.scoreboard-container .c0 {
+    float: left;
+    clear: left;
+    width: 20%;
+}
+.scoreboard-container .pre {
+    font-family: monospace;
+}
+.scoreboard-container .cs {
+    float: left;
+    clear: none;
+    width: 14%;
+    margin-left: 2%;
+    text-align: right;
+}
+.scoreboard-container .c2 {
+    float: left;
+    clear: none;
+    width: 30%;
+    margin-left: 2%;
+    text-align: right;
+}
+.scoreboard-container .bl {
+    border-left: 1px solid #AAA;
+}
+.scoreboard-container .list-group-item.hdr {
+    padding-top: 0.4em;
+    padding-bottom: 0;
+}
+.scoreboard-container .list-group-item.hdr2 {
+    padding-top: 0.2em;
+    padding-bottom: 0.4em;
+}

@@ -1,4 +1,4 @@
-angular.module('Monsters', ['Player'])
+angular.module('Monsters', ['Util','Saver','Player'])
     .constant('MonstersDef', {
         monsters: {
             zomb: {

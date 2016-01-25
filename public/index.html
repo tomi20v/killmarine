@@ -11,9 +11,14 @@
 
     <div class="container">
       <div class="row">
-        <div class="col-left col-md-3 col-xs-6">
+        <div class="col-left col-md-3 col-xs-6 ">
           <ul class="nav nav-tabs nav-justified">
-            <li role="presentation"><a href="#">&nbsp;</a></li>
+            <li role="presentation">
+              <a href="#">
+                <div ng-include="'app/template/cheatbar.html'"
+                     ng-controller="CheatBarController"></div>
+              </a>
+            </li>
           </ul>
           <ng-include src="'app/template/marine.html'" ng-controller="MarineController"></ng-include>
         </div>
@@ -38,26 +43,38 @@
               <div btf-markdown ng-include="'../README.md'"></div>
             </div>
             <div ng-if="tabActive('scoreboard')"
-                 controller="PlayerScoreboard"
-                 template="app/template/player/scoreboard.html"
+                 ng-controller="PlayerScoreboard"
+                 ng-include="'app/template/player/scoreboard.html'"
             ></div>
           </div>
         </div>
         <div class="col-right col-md-3">
           <ul class="nav nav-tabs nav-justified">
-            <li role="presentation"><a href="#">Monsters</a></li>
+            <li role="presentation">
+              <a href="#">
+                <!--<button id="header-cycle-buy" class="btn btn-default pull-right"
+                        ng-click="cycleBuyAtOnce()">BUY {{ buyAtOnce }}</button>-->
+                Monsters
+              </a>
+            </li>
           </ul>
-          <monsters id="monsters"></monsters>
+          <ng-include id="monsters"
+                      src="'app/template/monsters.html'"
+                      ng-controller="MonstersController"
+                     ></ng-include>
         </div>
       </div>
     </div>
 
     <script src="bower_components/angular/angular.min.js"></script>
+    <script src="bower_components/angular-local-storage/dist/angular-local-storage.min.js"></script>
     <script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
     <script src="bower_components/angular-markdown-directive/markdown.js"></script>
     <script src="bower_components/showdown/compressed/Showdown.min.js"></script>
 
     <script src="app/app.js"></script>
+    <script src="app/saver.js"></script>
+    <script src="app/cheatbar.js"></script>
     <script src="app/ticker.js"></script>
     <script src="app/util.js"></script>
     <script src="app/bignum.js"></script>
@@ -66,6 +83,7 @@
     <script src="app/items.js"></script>
     <script src="app/monsters.def.js"></script>
     <script src="app/monsters.js"></script>
+    <script src="app/meta.js"></script>
 
   </body>
 
