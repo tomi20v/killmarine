@@ -1,6 +1,7 @@
 #killmarine v0.2.1
 - rewamp of 0.1 code, turned back to angular1
 - added README.md display as MOTD
+- implemented some of the scoreboard, transparent tops handling, and saving. o, and cheatbar for now
 
 history
 
