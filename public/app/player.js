@@ -1,19 +1,15 @@
 angular.module('Player', [
     'Saver',
-    'Items',
     'Util',
     'BigNum',
+    'Items',
     'Monsters',
     'Ticker',
     'Meta'
 ])
-    .service('Player', function(Util, PlayerData) {
+    .service('Player', function(UtilData, PlayerData) {
 
-        return {
-            data: function(index) {
-                return Util.lookUp(PlayerData, index);
-            }
-        };
+        return UtilData.buildDataGetterService(PlayerData);
 
     })
     .service('PlayerData', function(Util, UtilData, ItemsBackpack, PlayerLoader) {

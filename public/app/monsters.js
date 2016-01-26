@@ -1,17 +1,11 @@
 angular.module('Monsters')
-    .service('Monsters', function(
-        $timeout,
-        Util,
-        MonstersData
-    ) {
+    .service('Monsters', function(UtilData, MonstersData) {
 
-        return {
-            data: angular.bind(Util.lookUp, MonstersData)
-        };
+        return UtilData.buildDataGetterService(MonstersData);
 
     })
     .service('MonstersData', function(
-        UtilBoot, UtilData, MonstersDef, MonstersLoader
+        UtilData, MonstersDef, MonstersLoader
     ) {
 
         var data = {
@@ -67,7 +61,9 @@ angular.module('Monsters')
         }
 
     })
-    .service('MonstersLogic', function($rootScope, UtilData, UtilMath, MonstersData, Player) {
+    .service('MonstersLogic', function(
+        $rootScope, UtilData, UtilMath, MonstersData, Player
+    ) {
 
         return {
             available: function(monsterId) {
@@ -88,7 +84,7 @@ angular.module('Monsters')
                     price = MonstersData.defs[monsterId].buyable().price,
                     q = MonstersData.defs[monsterId].buyable().q,
                     ownedPrice = UtilMath.sumGeoSeq(price, q, owned);
-                return UtilMath.seqNBySum(ownedPrice + Player.data.frags, price, q) - owned;
+                return UtilMath.seqNBySum(ownedPrice + Player.data('frags'), price, q) - owned;
             },
             buy: function(monsterId, cnt) {
 
@@ -100,7 +96,7 @@ angular.module('Monsters')
 
                 nextPrice = this.nextPrice(monsterId, cnt);
 
-                if (nextPrice <= Player.data.frags) {
+                if (nextPrice <= Player.data('frags')) {
                     this._buy(monsterId, cnt, nextPrice);
                 }
 

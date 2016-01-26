@@ -44,8 +44,10 @@
             </div>
             <div ng-if="tabActive('scoreboard')"
                  ng-controller="PlayerScoreboard"
-                 ng-include="'app/template/player/scoreboard.html'"
-            ></div>
+                 ng-include="'app/template/player/scoreboard.html'"></div>
+            <div ng-if="tabActive('upgrades')"
+                 ng-controller="UpgradesController"
+                 ng-include="'app/template/upgrades.html'"></div>
           </div>
         </div>
         <div class="col-right col-md-3">
@@ -73,17 +75,18 @@
     <script src="bower_components/showdown/compressed/Showdown.min.js"></script>
 
     <script src="app/app.js"></script>
-    <script src="app/saver.js"></script>
-    <script src="app/cheatbar.js"></script>
-    <script src="app/ticker.js"></script>
     <script src="app/util.js"></script>
     <script src="app/bignum.js"></script>
-    <script src="app/marine.js"></script>
-    <script src="app/player.js"></script>
+    <script src="app/ticker.js"></script>
+    <script src="app/saver.js"></script>
+    <script src="app/cheatbar.js"></script>
     <script src="app/items.js"></script>
+    <script src="app/marine.js"></script>
     <script src="app/monsters.def.js"></script>
     <script src="app/monsters.js"></script>
     <script src="app/meta.js"></script>
+    <script src="app/player.js"></script>
+    <script src="app/upgrades.js"></script>
 
   </body>
 

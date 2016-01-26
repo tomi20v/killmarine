@@ -4,11 +4,7 @@ angular.module('Saver', [
     .service('Saver', function(SaverData, SaverLogic) {
 
         return {
-            register: function(
-                key,
-                data,
-                whitelist
-            ) {
+            register: function(key, data, whitelist) {
                 SaverData.saveRefs[key] = {
                     data: data,
                     whitelist: whitelist

@@ -70,7 +70,7 @@ angular.module('Marine', ['Util'])
     })
     .controller('MarineController', function(
         $scope, $rootScope, $interval, $timeout,
-        UtilBoot, Marine
+        Marine
     ) {
 
         var state = {
@@ -138,9 +138,6 @@ angular.module('Marine', ['Util'])
             }
         });
 
-        UtilBoot
-            .bindListeners($scope, [
-                ['Marine.die', state.onDie]
-            ]);
+        $rootScope.$on('Marine.die', angular.bind(state, state.onDie));
 
     });

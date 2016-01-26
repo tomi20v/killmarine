@@ -18,13 +18,13 @@ angular.module('Ticker', ['Util', 'Player', 'Monsters', 'Items'])
             }
         };
 
-        function calculateMonsters(tick, monstersData) {
+        function calculateMonsters(tick, Monsters) {
 
-            angular.forEach(monstersData.owned, function(monsterCnt, monsterId) {
+            angular.forEach(Monsters.data('owned'), function(monsterCnt, monsterId) {
 
                 if (monsterCnt) {
 
-                    var monsterDef = monstersData.defs[monsterId],
+                    var monsterDef = Monsters.data(['defs', monsterId]),
                         ammoId = monsterDef.ammo,
                         ammoUsed = Math.min(
                             Math.floor(monsterDef.aps * Math.pow(1.1, monsterCnt)),
@@ -92,10 +92,10 @@ angular.module('Ticker', ['Util', 'Player', 'Monsters', 'Items'])
 
             tick.availableAmmo = angular.copy(Player.data('backpack'));
 
-            calculateMonsters(tick, Monsters.data);
+            calculateMonsters(tick, Monsters);
 
             angular.forEach(tick.monsters, function(data, monsterId) {
-                calculateFrags(tick, data, Monsters.data.defs[monsterId]);
+                calculateFrags(tick, data, Monsters.data(['defs', monsterId]));
             });
 
             calculateBackpacks(tick);

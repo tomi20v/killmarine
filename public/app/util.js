@@ -5,70 +5,26 @@ angular.module('Util', [])
         var eventUnBinds = {};
 
         return {
-            prepareData: function(data, whitelist) {
-                console.log('prepareData');
-                var cpy ;
-                if (angular.isArray(whitelist)) {
-                    cpy = {};
-                    angular.forEach(data, function(value, key) {
-                        if (whitelist.indexOf(key) != -1) {
-                            cpy[key] = angular.copy(value);
-                        }
-                    })
-                }
-                else {
-                    cpy = angular.copy(data);
-                }
-                data.game = {
-                    top: angular.copy(cpy),
-                    sum: angular.copy(cpy)
-                };
-                data.total = {
-                    top: angular.copy(cpy),
-                    sum: cpy
-                };
-                return this;
-            },
-            buildData: function(data) {
-                console.log('buildData');
-                return angular.extend(data, {
-                    inc: function(key, val) {
-                        Util.deepSet(data, key, Util.lookUp(data, key) + val);
-                    },
-                    max: function(key, val) {
-                        Util.deepSet(data, key, Math.max(Util.lookUp(data, key), val));
-                    }
-                })
-            },
-            buildGetSet: function(data) {
-                console.log('buildGetSet');
-                data.data = function(key, val) {
-                    return arguments.length == 1
-                        ? Util.lookUp(data, key)
-                        : Util.deepSet(data, key, val);
-                };
-                return data;
-            },
-            bindListeners: function(scope, listeners) {
-
-                var id = scope.id;
-
-                eventUnBinds[id] = [];
-
-                angular.forEach(listeners, function(listener) {
-                    var boundListener = angular.bind(scope, listener[1]),
-                        unBindFn = $rootScope.$on(listener[0], boundListener);
-                    //var boundListener = function(event, eventData) { listener[1](event, eventData); },
-                    //    unBindFn = $rootScope.$on(listener[0], boundListener);
-                    eventUnBinds[id].push(unBindFn);
-                });
-
-                scope.$on('$destroy', function() {
-                    angular.forEach(eventUnBinds[id], function(fn) { fn() });
-                    delete eventUnBinds[id];
-                });
-
-            }
+            //bindListeners: function(scope, listeners) {
+            //
+            //    var id = scope.id;
+            //
+            //    eventUnBinds[id] = [];
+            //
+            //    angular.forEach(listeners, function(listener) {
+            //        var boundListener = angular.bind(scope, listener[1]),
+            //            unBindFn = $rootScope.$on(listener[0], boundListener);
+            //        //var boundListener = function(event, eventData) { listener[1](event, eventData); },
+            //        //    unBindFn = $rootScope.$on(listener[0], boundListener);
+            //        eventUnBinds[id].push(unBindFn);
+            //    });
+            //
+            //    scope.$on('$destroy', function() {
+            //        angular.forEach(eventUnBinds[id], function(fn) { fn() });
+            //        delete eventUnBinds[id];
+            //    });
+            //
+            //}
         }
     })
     .service('UtilData', function(Util) {

@@ -1,0 +1,14 @@
+<div class="upgrades-container">
+  <ul class="list-group">
+    <li class="list-group-item active">Available:</li>
+    <li class="list-group-item">
+      <!-- this shall be adirective later, no? -->
+      <div ng-repeat="upgradeId in availableUpgrades()"
+           >
+        <span class="name">{{ upgrade(upgradeId).name }}</span>
+        <span class="price">{{ nextPrice(upgradeId) }}</span>
+      </div>
+    </li>
+  </ul>
+</div>
+asd
