@@ -1,13 +1,15 @@
 var app = angular.module('App', [
     'ngSanitize',
     'btford.markdown',
+    'BigNum',
     'Util',
     'Marine',
     'Player',
     'Upgrades',
     'Monsters',
     'CheatBar',
-    'Saver'
+    'Saver',
+    'Scoreboard'
 ]);
 
 app
@@ -16,7 +18,7 @@ app
             var _emit = $delegate.$emit;
 
             $delegate.$emit = function () {
-                if (arguments[0] == 'tick') {
+                if (arguments[0] == 'Ticker.tick') {
                     console.log('TIck');
                 }
                 else {
@@ -28,15 +30,13 @@ app
             return $delegate;
         });
     }])
-    .controller('AppController', function($scope, $rootScope, UtilConfig) {
+    .controller('AppController', function($scope, $rootScope, UtilBoot, UtilConfig, Player) {
 
-        angular.merge($scope, {
-            activeTab: 'scoreboard',
-            tabActive: function(id) {
-                return $scope.activeTab == id;
-            },
-            setTab: function(id) {
-                $scope.activeTab = id;
+        angular.extend($scope, UtilBoot.activeTabMixin(), {
+            //activeTab: 'scoreboard',
+            activeTab: 'upgrades',
+            getFrags: function() {
+                return Player.data('frags');
             }
         });
 

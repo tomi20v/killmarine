@@ -33,6 +33,9 @@ angular.module('Saver', [
             angular.forEach(data, function(value, key) {
                 if (whitelist && (whitelist.indexOf(key) === -1));
                 else if (angular.isFunction(value));
+                else if (angular.isArray(value)) {
+                    ret[key] = value;
+                }
                 else if (angular.isObject(value)) {
                     ret[key] = filter(value);
                 }

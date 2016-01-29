@@ -9,7 +9,11 @@ angular.module('Player', [
 ])
     .service('Player', function(UtilData, PlayerData) {
 
-        return UtilData.buildDataGetterService(PlayerData);
+        return angular.extend(UtilData.buildDataGetterService(PlayerData), {
+            canBuy: function(frags) {
+                return frags <= PlayerData.frags;
+            }
+        });
 
     })
     .service('PlayerData', function(Util, UtilData, ItemsBackpack, PlayerLoader) {
@@ -50,17 +54,6 @@ angular.module('Player', [
                 // @todo I should receive many frags depending on player level?
                 var frags = 1;
 
-                //PlayerData.frags += frags;
-                //PlayerData.game.sum.frags += frags;
-                //// total frags gained
-                //PlayerData.total.sum.frags+= frags;
-                //
-                //
-                //// max frags ina game
-                //PlayerData.max('game.top.frags', PlayerData.frags);
-                //// max frags gained in a game
-                //PlayerData.max('total.top.frags', PlayerData.frags);
-                //
                 //var backpack = ItemsBackpack.getRandom(eventData.level),
                 //    clippedBackpack = ItemsBackpack.add(PlayerData.backpack, backpack);
                 //ItemsBackpack.add(PlayerData.game.sum.backpack, clippedBackpack);
@@ -79,49 +72,37 @@ angular.module('Player', [
                     var frags = eventData.frags;
                     PlayerData.frags = Math.max(0, PlayerData.frags - frags);
                 }
+            },
+            onSpend: function(event, eventData) {
+                if (eventData.frags <= PlayerData.frags) {
+                    PlayerData.frags = PlayerData.frags - eventData.frags;
+                    if (eventData.callback) {
+                        eventData.callback();
+                    }
+                }
             }
         };
 
     })
     .run(function($rootScope, PlayerLogic) {
         $rootScope.$on('Marine.die', angular.bind(PlayerLogic, PlayerLogic.onMarineDie));
-        $rootScope.$on('Monster.bought', angular.bind(PlayerLogic, PlayerLogic.onMonsterBuy));
+        $rootScope.$on('Monsters.bought', angular.bind(PlayerLogic, PlayerLogic.onMonsterBuy));
+        $rootScope.$on('Player.spend', angular.bind(PlayerLogic, PlayerLogic.onSpend));
     })
-    .controller('PlayerScoreboard', function(
-        $scope, $rootScope, $timeout,
-        Util, UtilConfig, Ticker,
-        Player, MonstersData, Meta
-    ) {
-
-        angular.merge($scope, {
-            player: angular.bind(Player, Player.data),
-            monsters: function(index) {
-                return Util.lookUp(MonstersData, index);
-            },
-            meta: angular.bind(Meta, Meta.data),
-            pcnt: function(p, all) {
-                var pcnt = all == 0
-                    ? 0
-                    : p / all * 100;
-                return Math.round(pcnt, 2);
-            }
-        });
-
-    })
-    .controller('PlayerBackpack', function($scope, $rootScope, PlayerData) {
-
-        angular.merge($scope, {
-            items: function(what) {
-                //return PlayerData.data('backpack.items.' + what) || 0;
-                return PlayerData.backpack.items[what] || 0;
-            },
-            onMax: function(what) {
-                //return PlayerData.data('backpack.max.' + what) &&
-                //    PlayerData.data('backpack.items.' + what) == PlayerData.data('backpack.max.' + what);
-                return PlayerData.backpack.max[what] &&
-                    PlayerData.backpack.items[what] == PlayerData.backpack.max[what];
-            }
-        });
-
-    })
+    //.controller('PlayerBackpack', function($scope, $rootScope, PlayerData) {
+    //
+    //    angular.merge($scope, {
+    //        items: function(what) {
+    //            //return PlayerData.data('backpack.items.' + what) || 0;
+    //            return PlayerData.backpack.items[what] || 0;
+    //        },
+    //        onMax: function(what) {
+    //            //return PlayerData.data('backpack.max.' + what) &&
+    //            //    PlayerData.data('backpack.items.' + what) == PlayerData.data('backpack.max.' + what);
+    //            return PlayerData.backpack.max[what] &&
+    //                PlayerData.backpack.items[what] == PlayerData.backpack.max[what];
+    //        }
+    //    });
+    //
+    //})
 ;

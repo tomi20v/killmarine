@@ -65,6 +65,19 @@ angular.module('Monsters')
         $rootScope, UtilData, UtilMath, MonstersData, Player
     ) {
 
+        var buy = function(monsterId, cnt, price) {
+
+            var newOwned = MonstersData.topsAdd(['owned', monsterId], cnt),
+                newTotal = MonstersData.topsAdd(['ownedAll'], cnt);
+
+            $rootScope.$emit('Monsters.bought', {
+                id: monsterId,
+                cnt: cnt,
+                allCnt: newTotal,
+                frags: price
+            });
+        };
+
         return {
             available: function(monsterId) {
                 return MonstersData.defs[monsterId].available;
@@ -86,7 +99,7 @@ angular.module('Monsters')
                     ownedPrice = UtilMath.sumGeoSeq(price, q, owned);
                 return UtilMath.seqNBySum(ownedPrice + Player.data('frags'), price, q) - owned;
             },
-            buy: function(monsterId, cnt) {
+            buy: function(monsterId, cnt, successCallback) {
 
                 var nextPrice;
 
@@ -96,27 +109,16 @@ angular.module('Monsters')
 
                 nextPrice = this.nextPrice(monsterId, cnt);
 
-                if (nextPrice <= Player.data('frags')) {
-                    this._buy(monsterId, cnt, nextPrice);
-                }
-
-                return true;
-
-            },
-            _buy: function(monsterId, cnt, price) {
-
-                var newOwned = MonstersData.topsAdd(['owned', monsterId], cnt),
-                    newTotal = MonstersData.topsAdd(['ownedAll'], cnt);
-
-                $rootScope.$emit('Monster.bought', {
-                    id: monsterId,
-                    cnt: cnt,
-                    allCnt: newTotal,
-                    frags: price
+                $rootScope.$emit('Player.spend', {
+                    frags: nextPrice,
+                    callback: function() {
+                        buy(monsterId, cnt, nextPrice);
+                        if (successCallback) {
+                            successCallback();
+                        }
+                    }
                 });
-            },
-            onLoad: function() {
-                console.log('monsters onload', this, args);
+
             }
         };
 
@@ -140,8 +142,8 @@ angular.module('Monsters')
                 var nextPrice = this.nextPrice(monsterId, cnt);
                 return nextPrice && (nextPrice <= PlayerData.frags);
             },
-            buy: function(monsterId, cnt) {
-                return MonstersLogic.buy(monsterId, cnt);
+            buy: function(monsterId, cnt, callback) {
+                return MonstersLogic.buy(monsterId, cnt, callback);
             }
         },
         buyMaxStrategy = angular.extend({}, buyStrategy, {
@@ -151,8 +153,8 @@ angular.module('Monsters')
             nextPrice: function(monsterId) {
                 return MonstersLogic.maxPrice(monsterId) || MonstersLogic.nextPrice(monsterId, 1);
             },
-            buy: function(monsterId, cnt) {
-                return MonstersLogic.buy(monsterId, this.maxBuyable(monsterId));
+            buy: function(monsterId, cnt, callback) {
+                return MonstersLogic.buy(monsterId, this.maxBuyable(monsterId), callback);
             }
         });
 
@@ -184,8 +186,11 @@ angular.module('Monsters')
                 return this.strategy.canBuyNext(monsterId, this.buyAtOnce);
             },
             buy: function(monsterId) {
-                var useful = this.strategy.buy(monsterId, this.buyAtOnce);
-                $rootScope.$emit('Meta.usefulClick', useful);
+                this.strategy.buy(
+                    monsterId,
+                    this.buyAtOnce,
+                    angular.bind($rootScope, $rootScope.$emit, 'Meta.usefulClick')
+                );
             },
             maxBuyable: function(monsterId) {
                 return this.strategy.maxBuyable(monsterId, this.buyAtOnce);

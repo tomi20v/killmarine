@@ -109,7 +109,7 @@ angular.module('Ticker', ['Util', 'Player', 'Monsters', 'Items'])
 
             oldTick = tick;
 
-            $rootScope.$emit('tick', tick);
+            $rootScope.$emit('Ticker.tick', tick);
 
         }
 

@@ -1,14 +1,29 @@
-<div class="upgrades-container">
-  <ul class="list-group">
-    <li class="list-group-item active">Available:</li>
-    <li class="list-group-item">
-      <!-- this shall be adirective later, no? -->
-      <div ng-repeat="upgradeId in availableUpgrades()"
-           >
-        <span class="name">{{ upgrade(upgradeId).name }}</span>
-        <span class="price">{{ nextPrice(upgradeId) }}</span>
-      </div>
-    </li>
-  </ul>
+<div class="upgrades-container btn-group-vertical full" role="group">
+  <span class="list-group-item active">
+    <div class="btn-group">
+      <button ng-click="setActiveTab('available')"
+              class="btn btn-primary">available</button>
+      <button ng-click="setActiveTab('owned')"
+              class="btn btn-primary">owned ({{ ownedCnt() }})</button>
+    </div>
+    <button ng-if="isActiveTab('available')"
+            ng-disabled="!canBuyAll()"
+            ng-click="buyAll()"
+            class="btn btn-default pull-right">buy all for {{ allPrice }}</button>
+  </span>
+  <button ng-if="isActiveTab('available')"
+          ng-repeat="upgradeId in availableUpgrades()"
+          ng-disabled="!canBuy(upgradeId)"
+          ng-click="buy(upgradeId)"
+          class="full btn btn-default list-group-item">
+    <span class="name">{{ upgrade(upgradeId).name }}</span>
+    <span class="price">buy for {{ nextPrice(upgradeId) }}</span>
+  </button>
+  <button ng-if="isActiveTab('owned')"
+          ng-repeat="upgradeId in ownedUpgrades()"
+          disabled
+          class="full btn btn-default list-group-item">
+    <span class="name">{{ upgrade(upgradeId).name }}</span>
+    <span class="price">bought for {{ nextPrice(upgradeId) }}</span>
+  </button>
 </div>
-asd

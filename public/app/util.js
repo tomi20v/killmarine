@@ -5,6 +5,17 @@ angular.module('Util', [])
         var eventUnBinds = {};
 
         return {
+            activeTabMixin: function() {
+                return {
+                    activeTab: '',
+                    isActiveTab: function(id) {
+                        return this.activeTab == id;
+                    },
+                    setActiveTab: function(id) {
+                        this.activeTab = id;
+                    }
+                };
+            }
             //bindListeners: function(scope, listeners) {
             //
             //    var id = scope.id;
@@ -137,7 +148,9 @@ angular.module('Util', [])
                 angular.forEach(path, function(key) {
                     slice = slice[key];
                 });
+
                 return slice;
+
             },
             deepSet: function(data, path, value) {
                 var i;

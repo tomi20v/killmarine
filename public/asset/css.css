@@ -97,3 +97,17 @@
     padding-top: 0.2em;
     padding-bottom: 0.4em;
 }
+
+/** upgrades */
+.upgrades-container {
+    padding-top: 1em;
+}
+.upgrades-container button {
+    padding: 12px 20px;
+}
+.upgrades-container button .name {
+    float: left;
+}
+.upgrades-container button .price {
+    float: right; clear: none;
+}

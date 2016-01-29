@@ -9,10 +9,13 @@ angular.module('Meta', ['Util'])
         var data = {
             clicks: 0,
             usefulClicks: 0,
-            playtime: 0
+            playTime: 0,
+            gameStamp: null,
+            sessionStamp: null,
+            firstStamp: null
         };
 
-        UtilData.buildDataTotal(data);
+        UtilData.buildDataTotal(data, ['clicks', 'usefulClicks', 'playTime']);
 
         MetaLoader(data);
 
@@ -25,9 +28,15 @@ angular.module('Meta', ['Util'])
 
         return function(data) {
 
+            var stamp = new Date();
+
             Saver.register(saveKey, data);
 
-            angular.merge(data, Saver.load(saveKey));
+            angular.merge(data, {
+                sessionStamp: angular.copy(stamp),
+                gameStamp: angular.copy(stamp),
+                firstStamp: stamp
+            }, Saver.load(saveKey));
 
         }
 
@@ -40,6 +49,9 @@ angular.module('Meta', ['Util'])
             },
             onClick: function () {
                 MetaData.topsAdd('clicks', 1);
+            },
+            onTick: function(tick) {
+                MetaData.topsAdd('playTime', 1);
             }
         }
 
@@ -47,5 +59,6 @@ angular.module('Meta', ['Util'])
     .run(function($rootScope, $document, MetaLogic) {
         $rootScope.$on('Meta.usefulClick', angular.bind(MetaLogic, MetaLogic.onUsefulClick));
         $document.on('click', angular.bind(MetaLogic, MetaLogic.onClick));
+        $document.on('Ticker.tick', angular.bind(MetaLogic, MetaLogic.onTick));
     })
 ;
