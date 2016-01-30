@@ -41,7 +41,7 @@ angular.module('Meta', ['Util'])
         }
 
     })
-    .service('MetaLogic', function(MetaData) {
+    .service('MetaLogic', function($rootScope, MetaData) {
 
         return {
             onUsefulClick: function(){
@@ -49,6 +49,11 @@ angular.module('Meta', ['Util'])
             },
             onClick: function () {
                 MetaData.topsAdd('clicks', 1);
+                // click comes from document event which wouldn't trigger digest cycle otherwise
+                // phase check most probably unnecessary
+                //if (!$rootScope.$$phase) {
+                    $rootScope.$apply();
+                //}
             },
             onTick: function(tick) {
                 MetaData.topsAdd('playTime', 1);
@@ -58,7 +63,7 @@ angular.module('Meta', ['Util'])
     })
     .run(function($rootScope, $document, MetaLogic) {
         $rootScope.$on('Meta.usefulClick', angular.bind(MetaLogic, MetaLogic.onUsefulClick));
+        $rootScope.$on('Ticker.tick', angular.bind(MetaLogic, MetaLogic.onTick));
         $document.on('click', angular.bind(MetaLogic, MetaLogic.onClick));
-        $document.on('Ticker.tick', angular.bind(MetaLogic, MetaLogic.onTick));
     })
 ;

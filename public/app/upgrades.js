@@ -36,11 +36,11 @@ angular.module('Upgrades', ['Util'])
                     description: 'Increase shooting frags by 100%',
                     price: 1e9+1,
                     requires: ['upgrades1'],
-                    reqs: function (d) {
+                    reqCallback: function (d) {
                         // return sum of 'bullet' tagged monsters
                         return (d.Monsters.data('owned.zomb') || 0 +
                             d.Monsters.data('owned.sarg') || 0 +
-                            d.monsters.data('owned.cmmd') || 0) > 100;
+                            d.Monsters.data('owned.cmmd') || 0) > 100;
                     }
                 },
                 rocket: {
@@ -84,6 +84,13 @@ angular.module('Upgrades', ['Util'])
                     reqCallback: function (d) {
                         // register usefulclicks / clicks for an hour and compare
                     }
+                },
+                bit16: {
+                    name: '16 bit game',
+                    description: 'Ownmore than 255 monsters',
+                    price: 15e4,
+                    requires: ['upgrades1'],
+                    reqSecret: ['monsterOverflow8']
                 }
             }
         }
@@ -99,6 +106,7 @@ angular.module('Upgrades', ['Util'])
 
         var data = {
             owned: [],
+            ownedAll: 0,
             buyTimes: {},
             available: [],
             defs: {}
@@ -127,7 +135,7 @@ angular.module('Upgrades', ['Util'])
 
         return function(data) {
 
-            Saver.register(saveKey, data, ['owned', 'buyTimes', 'tops']);
+            Saver.register(saveKey, data, ['owned', 'ownedAll', 'buyTimes', 'tops']);
 
             angular.merge(data, Saver.load(saveKey));
 
@@ -135,7 +143,7 @@ angular.module('Upgrades', ['Util'])
 
     })
     .service('UpgradesLogic', function(
-        $rootScope, $timeout, UtilData, UpgradesDef, UpgradesData, Upgrades, Monsters, Player, Meta
+        $rootScope, $timeout, UtilData, UtilTime, UpgradesDef, UpgradesData, Upgrades, Monsters, Player, Meta
     ) {
 
         var service = {
@@ -168,6 +176,7 @@ angular.module('Upgrades', ['Util'])
 
                     if (othis.owned(key) || othis.available(key));
                     else if (!othis.ownedAll(value.requires));
+                    else if (!allSecrets(value.reqSecrets));
                     else if (angular.isFunction(value.reqCallback)) {
                         var d = {
                             Upgrades: Upgrades,
@@ -200,6 +209,10 @@ angular.module('Upgrades', ['Util'])
                 })
             }
         },
+        allSecrets = function(secrets) {
+            // @todo implement with secrets
+            return true;
+        },
         buy = function(upgradeId, callback) {
 
             if (service.owned(upgradeId) || !service.available(upgradeId)) {
@@ -216,7 +229,9 @@ angular.module('Upgrades', ['Util'])
                     callback: function () {
 
                         UpgradesData.owned.push(upgradeId);
+                        UpgradesData.topsAdd('ownedAll', 1);
                         UpgradesData.available.splice(UpgradesData.available.indexOf(upgradeId), 1);
+                        UpgradesData.buyTimes[upgradeId] = UtilTime.playTime();
 
                         callback();
 
@@ -274,6 +289,7 @@ angular.module('Upgrades', ['Util'])
                 return UpgradesData.defs.upgrades[upgradeId] || {};
             },
             nextPrice: function(upgradeId) {
+                console.log(upgradeId, UpgradesLogic.nextPrice(upgradeId));
                 return UpgradesLogic.nextPrice(upgradeId);
             },
             canBuy: function(upgradeId) {

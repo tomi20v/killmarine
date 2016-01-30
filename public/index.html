@@ -58,7 +58,9 @@
           <ul class="nav nav-tabs nav-justified">
             <li role="presentation">
               <a href="#">
-                {{ getFrags() | BigPrint }} frags, {{ fps | BigPrint }} FPS
+                {{ getFrags() | BigPrint }} frags,
+                {{ fps | BigPrint }} FPS
+                {{ ticks | TimePrint }}
               </a>
             </li>
           </ul>

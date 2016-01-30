@@ -9,7 +9,7 @@ angular.module('BigNum', [])
             return (val / Math.pow(k, p))
                 .toFixed(4)
                 .substring(0, 5)
-                .replace(/[.0]+$/, '');
+                .replace(/(\.0+)$/, '');
         }
         function formatP(p) {
             return (p ? 'e' + p : '');
@@ -24,10 +24,6 @@ angular.module('BigNum', [])
                 return val;
             }
 
-            if (val == 10e9) {
-                console.log('x');
-            }
-
             p = Math.floor(Math.log(val) / Math.log(k));
 
             switch (UtilConfig.config.notation) {
@@ -37,9 +33,9 @@ angular.module('BigNum', [])
                         break;
                     }
                 case 1:
-                    p = Math.floor(Math.log(val) / Math.log(10) /3 ) * 3;
-                    ret = p > 3
-                        ? toP(val, p, 10) + formatP(p)
+                    p = Math.floor((val.toString().length-1) / 3);
+                    ret = p > 1
+                        ? toP(val, p*3, 10) + formatP(p*3)
                         : val;
                     break;
                 case 2:
@@ -47,7 +43,7 @@ angular.module('BigNum', [])
                     ret = toP(val, p, k) + formatP(p);
                     break;
             }
-            return ret;
+            return '' + ret;
         }
     })
     .service('BigPrintOptions', function() {

@@ -1,5 +1,5 @@
 angular.module('Ticker', ['Util', 'Player', 'Monsters', 'Items'])
-    .service('Ticker', function($rootScope, UtilMath, Player, PlayerData, Monsters, ItemsBackpack) {
+    .service('Ticker', function($rootScope, UtilMath, Player, PlayerData, Monsters, ItemsBackpack, TickerLoader) {
 
         var tickProto = {
             tick: {
@@ -87,6 +87,8 @@ angular.module('Ticker', ['Util', 'Player', 'Monsters', 'Items'])
             fps: 0
         };
 
+        TickerLoader(oldTick);
+
         return function() {
 
             var tick = angular.copy(tickProto);
@@ -121,6 +123,15 @@ angular.module('Ticker', ['Util', 'Player', 'Monsters', 'Items'])
 
             $rootScope.$emit('Ticker.tick', tick);
 
+        }
+
+    })
+    .service('TickerLoader', function(Saver) {
+
+        return function(tick) {
+            var data = Saver.load('Meta');
+            console.log(data);
+            tick.tick.seq = data.playTime;
         }
 
     })
