@@ -107,6 +107,11 @@
 }
 .upgrades-container button .name {
     float: left;
+    font-weight: bold;
+}
+.upgrades-container button .name small {
+    font-weight: normal;
+    font-size: 70%;
 }
 .upgrades-container button .price {
     float: right; clear: none;

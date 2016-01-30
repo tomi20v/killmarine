@@ -24,6 +24,10 @@ angular.module('BigNum', [])
                 return val;
             }
 
+            if (val == 10e9) {
+                console.log('x');
+            }
+
             p = Math.floor(Math.log(val) / Math.log(k));
 
             switch (UtilConfig.config.notation) {

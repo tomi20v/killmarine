@@ -15,8 +15,11 @@ angular.module('Ticker', ['Util', 'Player', 'Monsters', 'Items'])
                 hit: 0,
                 shoot: 0,
                 total: 0
-            }
-        };
+            },
+            fps: 0
+        },
+        fpsSamples = 1,
+        maxFpsSamples = 100;
 
         function calculateMonsters(tick, Monsters) {
 
@@ -80,7 +83,8 @@ angular.module('Ticker', ['Util', 'Player', 'Monsters', 'Items'])
         var oldTick = {
             tick: {
                 seq: 0
-            }
+            },
+            fps: 0
         };
 
         return function() {
@@ -97,6 +101,12 @@ angular.module('Ticker', ['Util', 'Player', 'Monsters', 'Items'])
             angular.forEach(tick.monsters, function(data, monsterId) {
                 calculateFrags(tick, data, Monsters.data(['defs', monsterId]));
             });
+
+            tick.fps = (oldTick.fps *(fpsSamples - 1) + tick.frags.total)/fpsSamples;
+            // increase samples only if samples < frags because with low frags and high samples it is too biased
+            if ((fpsSamples < tick.fps) && (fpsSamples < maxFpsSamples)) {
+                fpsSamples++;
+            }
 
             calculateBackpacks(tick);
 

@@ -53,13 +53,12 @@
                  ng-include="'app/template/upgrades.html'"></div>
           </div>
         </div>
+        <!-- RIGHT COLUMN -->
         <div class="col-right col-md-3">
           <ul class="nav nav-tabs nav-justified">
             <li role="presentation">
               <a href="#">
-                <!--<button id="header-cycle-buy" class="btn btn-default pull-right"
-                        ng-click="cycleBuyAtOnce()">BUY {{ buyAtOnce }}</button>-->
-                {{ getFrags() | BigPrint }} frags
+                {{ getFrags() | BigPrint }} frags, {{ fps | BigPrint }} FPS
               </a>
             </li>
           </ul>

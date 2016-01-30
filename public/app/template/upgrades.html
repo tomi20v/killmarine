@@ -9,21 +9,23 @@
     <button ng-if="isActiveTab('available')"
             ng-disabled="!canBuyAll()"
             ng-click="buyAll()"
-            class="btn btn-default pull-right">buy all for {{ allPrice }}</button>
+            class="btn btn-default pull-right">buy all for {{ allPrice() | BigPrint}}</button>
   </span>
   <button ng-if="isActiveTab('available')"
           ng-repeat="upgradeId in availableUpgrades()"
           ng-disabled="!canBuy(upgradeId)"
           ng-click="buy(upgradeId)"
           class="full btn btn-default list-group-item">
-    <span class="name">{{ upgrade(upgradeId).name }}</span>
-    <span class="price">buy for {{ nextPrice(upgradeId) }}</span>
+    <span class="name">{{ upgrade(upgradeId).name }}
+      <small ng-if="canBuy(upgradeId)">{{ upgrade(upgradeId).description }}</small>
+    </span>
+    <span class="price">buy for {{ nextPrice(upgradeId) | BigPrint}}</span>
   </button>
   <button ng-if="isActiveTab('owned')"
           ng-repeat="upgradeId in ownedUpgrades()"
           disabled
           class="full btn btn-default list-group-item">
     <span class="name">{{ upgrade(upgradeId).name }}</span>
-    <span class="price">bought for {{ nextPrice(upgradeId) }}</span>
+    <span class="price">bought for {{ nextPrice(upgradeId) | BigPrint }}</span>
   </button>
 </div>

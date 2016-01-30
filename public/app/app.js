@@ -35,9 +35,14 @@ app
         angular.extend($scope, UtilBoot.activeTabMixin(), {
             //activeTab: 'scoreboard',
             activeTab: 'upgrades',
+            fps: 0,
             getFrags: function() {
                 return Player.data('frags');
             }
         });
+
+        $rootScope.$on('Ticker.tick', function(event, tick) {
+            $scope.fps = Math.round(tick.fps);
+        })
 
     });

@@ -1,39 +1,31 @@
 angular.module('Upgrades', ['Util'])
     .service('UpgradesDef', function() {
 
-        var watchData = {},
-            getWatchData = function(key) {
-                if (!watchData[key]) {
-                    watchData[key] = {};
-                }
-                return watchData[key];
-            };
-
         return {
             upgrades: {
-                upgrades: {
-                    name: 'Upgrades!',
-                    description: 'Unlocks upgrades.',
-                    price: 100
+                upgrades1: {
+                    name: 'Upgrades #1',
+                    description: 'Unlocks upgrades',
+                    price: 1
                 },
                 chainShaw: {
                     name: 'Chainshaw',
                     description: 'Triple meelee frags',
-                    price: 10e66,
-                    requires: ['upgrades']
+                    price: 666*1e6,
+                    requires: ['upgrades1']
                 },
                 shotgun: {
                     name: 'Shotgun',
                     description: 'Enable shotgun in the marine shootout. Also doubles Sargeant frags',
-                    price: 10e3,
-                    requires: ['upgrades'],
-                    reqs: function (d) {
+                    price: 1e3,
+                    requires: ['upgrades1'],
+                    reqCallback: function (d) {
                         return (
                                 d.Monsters.data('owned.sarge') || 0
                             ) > 25;
                     }
                 },
-                weaponMaster: {
+                weaponCollector: {
                     name: 'Weapon collector',
                     description: 'blah',
                     price: 10e8,
@@ -42,8 +34,8 @@ angular.module('Upgrades', ['Util'])
                 biggerBullets: {
                     name: 'Bigger bullets',
                     description: 'Increase shooting frags by 100%',
-                    price: 10e9,
-                    requires: ['upgrades'],
+                    price: 1e9+1,
+                    requires: ['upgrades1'],
                     reqs: function (d) {
                         // return sum of 'bullet' tagged monsters
                         return (d.Monsters.data('owned.zomb') || 0 +
@@ -51,11 +43,17 @@ angular.module('Upgrades', ['Util'])
                             d.monsters.data('owned.cmmd') || 0) > 100;
                     }
                 },
+                rocket: {
+                    name: 'Rocket!',
+                    description: 'Enable rocket and rocket using monsters',
+                    price: 10e6,
+                    requires: ['upgrades1']
+                },
                 biggerRockets: {
                     name: 'Bigger rockets',
                     description: 'Increase shooting frags by 1000%',
                     price: 10e18,
-                    requires: ['upgrades'],
+                    requires: ['upgrades1','rocket'],
                     reqs: function (d) {
                         return (d.Monsters.data('owned.imp') || 0) > 1000;
                     }
@@ -64,24 +62,27 @@ angular.module('Upgrades', ['Util'])
                     name: 'Let me click',
                     description: 'Increase click hits by 100%',
                     price: 1,
-                    requires: ['upgrades'],
-                    req: function (d) {
+                    requires: ['upgrades1'],
+                    reqCallback: function (d) {
                         return d.Meta.data('usefulClicks') > 10;
+                    }
+                },
+                clickMePlenty: {
+                    name: 'Click me plenty!',
+                    description: 'Increase FPS based on number of clicks in this game',
+                    price: 1e9,
+                    requires: ['clickAround'],
+                    reqCallback: function (d) {
+
                     }
                 },
                 clickMare: {
                     name: 'Clickmare',
                     description: 'Each hit on the marine will count as 100 hits',
                     price: 1,
-                    req: {
-                        upgrades: ['upgrades', 'clickMePlenty'],
-                        fn: function (d) {
-
-                        }
-                    },
-                    // watcher to register with ticker
-                    watcher: function (d, tick) {
-                        // register usefulclicks / clicks for an hour
+                    requires: ['upgrades1', 'clickMePlenty'],
+                    reqCallback: function (d) {
+                        // register usefulclicks / clicks for an hour and compare
                     }
                 }
             }
@@ -134,7 +135,7 @@ angular.module('Upgrades', ['Util'])
 
     })
     .service('UpgradesLogic', function(
-        $rootScope, $timeout, UtilData, UpgradesDef, UpgradesData, Upgrades, Monsters, Player
+        $rootScope, $timeout, UtilData, UpgradesDef, UpgradesData, Upgrades, Monsters, Player, Meta
     ) {
 
         var service = {
@@ -156,18 +157,29 @@ angular.module('Upgrades', ['Util'])
                 return allOwned;
             },
             refresh: function() {
+
                 var othis = this;
+
+                function becomesAvailable(key) {
+                    UpgradesData.available.push(key);
+                }
+
                 angular.forEach(UpgradesDef.upgrades, function(value, key) {
+
                     if (othis.owned(key) || othis.available(key));
                     else if (!othis.ownedAll(value.requires));
-                    else if (angular.isFunction(value.reqFn)) {
+                    else if (angular.isFunction(value.reqCallback)) {
                         var d = {
                             Upgrades: Upgrades,
-                            Monsters: Monsters
+                            Monsters: Monsters,
+                            Meta: Meta
+                        };
+                        if (value.reqCallback(d)) {
+                            becomesAvailable(key);
                         }
                     }
                     else {
-                        UpgradesData.available.push(key);
+                        becomesAvailable(key);
                     }
                 });
             },
@@ -225,25 +237,30 @@ angular.module('Upgrades', ['Util'])
 
     })
     .run(function($rootScope, UpgradesLogic) {
-        UpgradesLogic.refresh();
+        $rootScope.$on('Ticker.tick', angular.bind(UpgradesLogic, UpgradesLogic.refresh));
     })
     .controller('UpgradesController', function($scope, $rootScope, Util, UtilBoot, UpgradesData, UpgradesLogic, Player) {
 
-        var refreshAllPrice = function() {
-            var allPrice = 0;
-            angular.forEach(UpgradesData.available, function(upgradeId) {
-                allPrice+= UpgradesLogic.nextPrice(upgradeId);
-            });
-            $scope.allPrice = allPrice;
-        },
-        usefulBuy = function() {
+        var usefulBuy = function() {
             $rootScope.$emit('Meta.usefulClick');
-            refreshAllPrice();
         };
 
         angular.extend($scope, UtilBoot.activeTabMixin(), {
             activeTab: 'available',
-            allPrice: 0,
+            allPrice: function() {
+                var allPrice = 0;
+                angular.forEach(UpgradesData.available, function(upgradeId) {
+                    allPrice+= UpgradesLogic.nextPrice(upgradeId);
+                });
+                return allPrice;
+            },
+            canBuyAll: function() {
+                var allPrice = this.allPrice();
+                return allPrice && Player.canBuy(allPrice);
+            },
+            buyAll: function() {
+                UpgradesLogic.buyAll(usefulBuy);
+            },
             availableUpgrades: function() {
                 return UpgradesData.available;
             },
@@ -264,16 +281,8 @@ angular.module('Upgrades', ['Util'])
             },
             buy: function(upgradeId) {
                 UpgradesLogic.buy(upgradeId, usefulBuy);
-            },
-            canBuyAll: function() {
-                return this.allPrice && Player.canBuy(this.allPrice);
-            },
-            buyAll: function() {
-                UpgradesLogic.buyAll(usefulBuy);
             }
         });
-
-        refreshAllPrice();
 
     })
 ;
