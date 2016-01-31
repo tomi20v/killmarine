@@ -39,7 +39,7 @@ app
             ticks: 0,
             getFrags: function() {
                 return Player.data('frags');
-            },
+            }
         });
 
         $rootScope.$on('Ticker.tick', function(event, tick) {

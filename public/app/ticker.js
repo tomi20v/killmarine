@@ -130,8 +130,7 @@ angular.module('Ticker', ['Util', 'Player', 'Monsters', 'Items'])
 
         return function(tick) {
             var data = Saver.load('Meta');
-            console.log(data);
-            tick.tick.seq = data.playTime;
+            tick.tick.seq = data.playTime || 0;
         }
 
     })

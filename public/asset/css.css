@@ -67,35 +67,39 @@
 .scoreboard-container .c0 {
     float: left;
     clear: left;
-    width: 20%;
+    width: 26%;
 }
 .scoreboard-container .pre {
     font-family: monospace;
 }
-.scoreboard-container .cs {
+.scoreboard-container .c1 {
     float: left;
     clear: none;
-    width: 14%;
+    width: 22%;
     margin-left: 2%;
     text-align: right;
 }
-.scoreboard-container .c2 {
+.scoreboard-container .c10 {
     float: left;
     clear: none;
-    width: 30%;
-    margin-left: 2%;
+    width: 18%;
+    margin-left: 6%;
+}
+.scoreboard-container .c10.first {
+    clear: left;
+    width: 26%;
+    margin-left: 0;
+}
+.scoreboard-container .c11 {
+    float: left;
+    clear: none;
     text-align: right;
+    width: 20%;
+    margin-left: 4%;
+
 }
 .scoreboard-container .bl {
     border-left: 1px solid #AAA;
-}
-.scoreboard-container .list-group-item.hdr {
-    padding-top: 0.4em;
-    padding-bottom: 0;
-}
-.scoreboard-container .list-group-item.hdr2 {
-    padding-top: 0.2em;
-    padding-bottom: 0.4em;
 }
 
 /** upgrades */

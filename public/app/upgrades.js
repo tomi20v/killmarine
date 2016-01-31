@@ -116,7 +116,7 @@ angular.module('Upgrades', ['Util'])
             data.owned[key] = 0;
         });
 
-        UtilData.buildDataTotal(data);
+        UtilData.buildDataTop(data);
 
         UpgradesLoader(data);
 
@@ -289,7 +289,6 @@ angular.module('Upgrades', ['Util'])
                 return UpgradesData.defs.upgrades[upgradeId] || {};
             },
             nextPrice: function(upgradeId) {
-                console.log(upgradeId, UpgradesLogic.nextPrice(upgradeId));
                 return UpgradesLogic.nextPrice(upgradeId);
             },
             canBuy: function(upgradeId) {

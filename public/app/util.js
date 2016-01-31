@@ -19,6 +19,105 @@ angular.module('Util', [])
                         this.activeTab = id;
                     }
                 };
+            }
+            //,bindControllerListeners: function(scope, listeners) {
+            //
+            //    var id = scope.id;
+            //
+            //    eventUnBinds[id] = [];
+            //
+            //    angular.forEach(listeners, function(listener) {
+            //        var boundListener = angular.bind(scope, listener[1]),
+            //            unBindFn = $rootScope.$on(listener[0], boundListener);
+            //        //var boundListener = function(event, eventData) { listener[1](event, eventData); },
+            //        //    unBindFn = $rootScope.$on(listener[0], boundListener);
+            //        eventUnBinds[id].push(unBindFn);
+            //    });
+            //
+            //    scope.$on('$destroy', function() {
+            //        angular.forEach(eventUnBinds[id], function(fn) { fn() });
+            //        delete eventUnBinds[id];
+            //    });
+            //
+            //}
+        }
+    })
+    .service('UtilData', function(Util) {
+
+        return {
+            copyWhitelistedProps: function (data, whitelist) {
+                var cpy;
+                if (angular.isArray(whitelist)) {
+                    cpy = {};
+                    angular.forEach(whitelist, function(key) {
+                        var value = data[key];
+                        cpy[key] = angular.isObject(value)
+                            ? angular.extend({}, data[key])
+                            : value;
+                    });
+                }
+                else {
+                    cpy = angular.copy(data);
+                }
+                return cpy;
+            },
+            buildDataGetterService: function(data) {
+                return {
+                    data: function(index) {
+                        return Util.lookUp(data, index);
+                    }
+                }
+            },
+            buildDataTopSum: function(data, whitelist) {
+                var cpy = this.copyWhitelistedProps(data, whitelist);
+                angular.extend(data, {
+                    tops: {
+                        top: angular.copy(cpy),
+                        total: angular.copy(cpy),
+                        thisGameSum: angular.copy(cpy),
+                        anyGameSum: cpy
+                    },
+                    topsAdd: function(index, value) {
+                        var newVal = Util.deepAddMin(this, index, value, 0),
+                            // max in any game
+                            newTop = Util.deepSetMax(this.tops.top, index, newVal),
+                            // sum/gained this game
+                            newSum = Util.deepAddMin(this.tops.thisGameSum, index, value, newVal),
+                            // max gained in any game
+                            newAnyGameSum = Util.deepSetMax(this.tops.anyGameSum, index, newSum),
+                            // all gained total
+                            //newTotalSum = Util.deepAddMin(this.tops.total, index, value, newAnyGameSum);
+                            newTotalSum = Util.deepAddMin(this.tops.total, index, value, 0);
+                    }
+                });
+                return this;
+            },
+            buildDataTop: function(data, whitelist) {
+                var cpy = this.copyWhitelistedProps(data, whitelist);
+                angular.extend(data, {
+                    tops: {
+                        top: angular.copy(cpy),
+                        total: cpy
+                    },
+                    topsAdd: function(index, value) {
+                        var newVal = Util.deepAdd(this, index, value),
+                            t = Util.deepAddMin(this.tops.top, index, value, newVal);
+                        Util.deepAddMin(this.tops.total, index, value, t);
+                        return newVal;
+                    }
+                });
+                return this;
+            }
+        }
+
+    })
+    .service('UtilMath', function() {
+
+        return {
+            randomInt: function(min, max) {
+
+                return Math.floor(min + Math.random() * (max-min));
+
             },
             sumGeoSeq: function(a1, q, n) {
                 return a1 * (Math.pow(q, n) - 1) / (q - 1);

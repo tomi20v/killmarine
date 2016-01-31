@@ -15,7 +15,7 @@ angular.module('Meta', ['Util'])
             firstStamp: null
         };
 
-        UtilData.buildDataTotal(data, ['clicks', 'usefulClicks', 'playTime']);
+        UtilData.buildDataTop(data, ['clicks', 'usefulClicks', 'playTime']);
 
         MetaLoader(data);
 
@@ -28,13 +28,13 @@ angular.module('Meta', ['Util'])
 
         return function(data) {
 
-            var stamp = new Date();
+            var stamp = new Date().getTime();
 
             Saver.register(saveKey, data);
 
             angular.merge(data, {
-                sessionStamp: angular.copy(stamp),
-                gameStamp: angular.copy(stamp),
+                sessionStamp: stamp,
+                gameStamp: stamp,
                 firstStamp: stamp
             }, Saver.load(saveKey));
 

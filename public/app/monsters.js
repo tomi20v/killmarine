@@ -36,7 +36,7 @@ angular.module('Monsters')
             }
         });
 
-        UtilData.buildDataTotal(data, fields);
+        UtilData.buildDataTop(data, fields);
 
         MonstersLoader(data, fields.concat('tops'));
 

@@ -19,11 +19,11 @@ angular.module('Player', [
     .service('PlayerData', function(Util, UtilData, ItemsBackpack, PlayerLoader) {
 
         var data = {
-            frags: 10,
+            frags: 0,
             backpack: ItemsBackpack.instance()
         };
 
-        UtilData.buildDataTotalAndGame(data);
+        UtilData.buildDataTopSum(data);
 
         data.backpack.max.clip = 200;
         data.backpack.max.shell = 50;
