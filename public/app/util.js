@@ -20,6 +20,8 @@ angular.module('Util', [])
                     }
                 };
             }
+            // this code is left here so if I'd ever need bindindgs for a controller,
+            // those should be done by this binder
             //,bindControllerListeners: function(scope, listeners) {
             //
             //    var id = scope.id;
@@ -120,7 +122,12 @@ angular.module('Util', [])
 
             },
             sumGeoSeq: function(a1, q, n) {
-                return a1 * (Math.pow(q, n) - 1) / (q - 1);
+                if (q == 1) {
+                    return a1;
+                }
+                else {
+                    return a1 * (Math.pow(q, n) - 1) / (q - 1);
+                }
             },
             sumGeoSeqSlice: function(a1, q, n1, n2) {
                 return (Math.pow(q, n2) - Math.pow(q, n1-1)) * a1 / (q - 1);

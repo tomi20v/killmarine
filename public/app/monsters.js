@@ -4,8 +4,31 @@ angular.module('Monsters')
         return UtilData.buildDataGetterService(MonstersData);
 
     })
+    .service('MonstersBuilder',function(MonstersDef) {
+
+        var monsterBuilder = function(monster) {
+            var buyable = monster.buyable;
+            angular.extend(monster, {
+                buyable: function() {
+                    return buyable;
+                }
+            });
+
+            return monster;
+        };
+
+        return function(data) {
+            angular.forEach(MonstersDef.monsters, function(monster) {
+                var monsterCpy = angular.extend({}, monster);
+                data.owned[monster.id] = 0;
+                data.defs[monster.id] = monsterBuilder(monsterCpy);
+            });
+            console.log(data);
+        }
+
+    })
     .service('MonstersData', function(
-        UtilData, MonstersDef, MonstersLoader
+        UtilData, MonstersDef, MonstersBuilder, MonstersLoader
     ) {
 
         var data = {
@@ -14,27 +37,9 @@ angular.module('Monsters')
                 // these are cached values, no need to save unless plan changes
                 defs: {}
             },
-            fields = ['owned', 'ownedAll'],
-            monsterBuilder = function(monster) {
-                var buyable = monster.buyable;
-                angular.extend(monster, {
-                    buyable: function() {
-                        return buyable;
-                    }
-                });
+            fields = ['owned', 'ownedAll'];
 
-                return monster;
-            };
-
-        angular.forEach(MonstersDef.monsters, function(monster) {
-            data.owned[monster.id] = 0;
-        });
-
-        angular.forEach(MonstersDef.monsters, function(monster, monsterId) {
-            if (monster.available) {
-                data.defs[monsterId] = monsterBuilder(angular.copy(monster));
-            }
-        });
+        MonstersBuilder(data);
 
         UtilData.buildDataTop(data, fields);
 
@@ -62,7 +67,7 @@ angular.module('Monsters')
 
     })
     .service('MonstersLogic', function(
-        $rootScope, UtilData, UtilMath, MonstersData, Player
+        $rootScope, UtilData, UtilMath, MonstersDef, MonstersBuilder, MonstersData, Player
     ) {
 
         var buy = function(monsterId, cnt, price) {
@@ -84,9 +89,13 @@ angular.module('Monsters')
             },
             nextPrice: function(monsterId, cnt) {
                 var owned = MonstersData.owned[monsterId],
-                    price = MonstersData.defs[monsterId].buyable().price,
-                    q = MonstersData.defs[monsterId].buyable().q;
-                return Math.floor(UtilMath.sumGeoSeq(price, q, owned + cnt) - UtilMath.sumGeoSeq(price, q, owned));
+                    buyable = (MonstersData.defs[monsterId].buyable || function(){ return {}; }) (),
+                    price = buyable.price,
+                    q = buyable.q;
+                return Math.floor(
+                    UtilMath.sumGeoSeq(price, q, owned + cnt) -
+                    UtilMath.sumGeoSeq(price, q, owned)
+                );
             },
             maxPrice: function(monsterId) {
                 var cnt = this.maxBuyable(monsterId);
@@ -119,12 +128,20 @@ angular.module('Monsters')
                     }
                 });
 
+            },
+            onGameRestart: function() {
+                MonstersBuilder(MonstersData);
+            },
+            onMonsterAvailable: function(event, eventData) {
+//                console.log('x', eventData);
             }
         };
 
     })
-    .run(function($rootScope, Monsters) {
-        $rootScope.$on('Monsters.registerMod', angular.bind(Monsters, Monsters.registerMod));
+    .run(function($rootScope, MonstersLogic) {
+        //$rootScope.$on('Monsters.registerMod', angular.bind(Monsters, Monsters.registerMod));
+        $rootScope.$on('Game.restart', angular.bind(MonstersLogic, MonstersLogic.onGameRestart));
+        $rootScope.$on('Monsters.available', angular.bind(MonstersLogic, MonstersLogic.onMonsterAvailable));
     })
     .controller('MonstersController', function(
         $scope, $rootScope,

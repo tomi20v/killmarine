@@ -67,12 +67,6 @@ angular.module('Player', [
                 // backpack gained total
 
             },
-            onMonsterBuy: function(event, eventData) {
-                if (eventData.frags) {
-                    var frags = eventData.frags;
-                    PlayerData.frags = Math.max(0, PlayerData.frags - frags);
-                }
-            },
             onSpend: function(event, eventData) {
                 if (eventData.frags <= PlayerData.frags) {
                     PlayerData.frags = PlayerData.frags - eventData.frags;
@@ -86,7 +80,6 @@ angular.module('Player', [
     })
     .run(function($rootScope, PlayerLogic) {
         $rootScope.$on('Marine.die', angular.bind(PlayerLogic, PlayerLogic.onMarineDie));
-        $rootScope.$on('Monsters.bought', angular.bind(PlayerLogic, PlayerLogic.onMonsterBuy));
         $rootScope.$on('Player.spend', angular.bind(PlayerLogic, PlayerLogic.onSpend));
     })
     //.controller('PlayerBackpack', function($scope, $rootScope, PlayerData) {

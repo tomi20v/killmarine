@@ -1,100 +1,4 @@
-angular.module('Upgrades', ['Util'])
-    .service('UpgradesDef', function() {
-
-        return {
-            upgrades: {
-                upgrades1: {
-                    name: 'Upgrades #1',
-                    description: 'Unlocks upgrades',
-                    price: 1
-                },
-                chainShaw: {
-                    name: 'Chainshaw',
-                    description: 'Triple meelee frags',
-                    price: 666*1e6,
-                    requires: ['upgrades1']
-                },
-                shotgun: {
-                    name: 'Shotgun',
-                    description: 'Enable shotgun in the marine shootout. Also doubles Sargeant frags',
-                    price: 1e3,
-                    requires: ['upgrades1'],
-                    reqCallback: function (d) {
-                        return (
-                                d.Monsters.data('owned.sarge') || 0
-                            ) > 25;
-                    }
-                },
-                weaponCollector: {
-                    name: 'Weapon collector',
-                    description: 'blah',
-                    price: 10e8,
-                    requires: ['chainShaw', 'shotgun', 'rocket', 'plasma', 'bfg']
-                },
-                biggerBullets: {
-                    name: 'Bigger bullets',
-                    description: 'Increase shooting frags by 100%',
-                    price: 1e9+1,
-                    requires: ['upgrades1'],
-                    reqCallback: function (d) {
-                        // return sum of 'bullet' tagged monsters
-                        return (d.Monsters.data('owned.zomb') || 0 +
-                            d.Monsters.data('owned.sarg') || 0 +
-                            d.Monsters.data('owned.cmmd') || 0) > 100;
-                    }
-                },
-                rocket: {
-                    name: 'Rocket!',
-                    description: 'Enable rocket and rocket using monsters',
-                    price: 10e6,
-                    requires: ['upgrades1']
-                },
-                biggerRockets: {
-                    name: 'Bigger rockets',
-                    description: 'Increase shooting frags by 1000%',
-                    price: 10e18,
-                    requires: ['upgrades1','rocket'],
-                    reqs: function (d) {
-                        return (d.Monsters.data('owned.imp') || 0) > 1000;
-                    }
-                },
-                clickAround: {
-                    name: 'Let me click',
-                    description: 'Increase click hits by 100%',
-                    price: 1,
-                    requires: ['upgrades1'],
-                    reqCallback: function (d) {
-                        return d.Meta.data('usefulClicks') > 10;
-                    }
-                },
-                clickMePlenty: {
-                    name: 'Click me plenty!',
-                    description: 'Increase FPS based on number of clicks in this game',
-                    price: 1e9,
-                    requires: ['clickAround'],
-                    reqCallback: function (d) {
-
-                    }
-                },
-                clickMare: {
-                    name: 'Clickmare',
-                    description: 'Each hit on the marine will count as 100 hits',
-                    price: 1,
-                    requires: ['upgrades1', 'clickMePlenty'],
-                    reqCallback: function (d) {
-                        // register usefulclicks / clicks for an hour and compare
-                    }
-                },
-                bit16: {
-                    name: '16 bit game',
-                    description: 'Ownmore than 255 monsters',
-                    price: 15e4,
-                    requires: ['upgrades1'],
-                    reqSecret: ['monsterOverflow8']
-                }
-            }
-        }
-    })
+angular.module('Upgrades')
     .service('Upgrades', function(UtilData, UpgradesData) {
 
         return UtilData.buildDataGetterService(UpgradesData);
@@ -121,9 +25,7 @@ angular.module('Upgrades', ['Util'])
         UpgradesLoader(data);
 
         angular.extend(data, {
-            defs: {
-                upgrades: angular.copy(UpgradesDef.upgrades)
-            }
+            defs: angular.copy(UpgradesDef.upgrades)
         });
 
         return data;
@@ -193,7 +95,7 @@ angular.module('Upgrades', ['Util'])
                 });
             },
             nextPrice: function(upgradeId) {
-                return UpgradesData.defs.upgrades[upgradeId].price;
+                return UpgradesData.defs[upgradeId].price;
             },
             canBuy: function(upgradeId) {
                 return Player.canBuy(this.nextPrice(upgradeId));
@@ -213,13 +115,13 @@ angular.module('Upgrades', ['Util'])
             // @todo implement with secrets
             return true;
         },
-        buy = function(upgradeId, callback) {
+        buy = function(upgradeId, succesCallback) {
 
             if (service.owned(upgradeId) || !service.available(upgradeId)) {
                 return;
             }
 
-            var price = UpgradesData.defs.upgrades[upgradeId].price;
+            var price = UpgradesData.defs[upgradeId].price;
 
             // I'm not sure why but I have to timeout this $emit otherwise angular.forEach()
             //      breaks in caller method (WTF)
@@ -233,7 +135,11 @@ angular.module('Upgrades', ['Util'])
                         UpgradesData.available.splice(UpgradesData.available.indexOf(upgradeId), 1);
                         UpgradesData.buyTimes[upgradeId] = UtilTime.playTime();
 
-                        callback();
+                        if (angular.isFunction(UpgradesData.defs[upgradeId].success)) {
+                            UpgradesData.defs[upgradeId].success($rootScope);
+                        }
+
+                        succesCallback();
 
                         $rootScope.$emit('Upgrades.bought', {
                             id: upgradeId,
@@ -252,7 +158,9 @@ angular.module('Upgrades', ['Util'])
 
     })
     .run(function($rootScope, UpgradesLogic) {
-        $rootScope.$on('Ticker.tick', angular.bind(UpgradesLogic, UpgradesLogic.refresh));
+        var refresh = angular.bind(UpgradesLogic, UpgradesLogic.refresh);
+        $rootScope.$on('Ticker.tick', refresh);
+        $rootScope.$on('Monsters.bought', refresh);
     })
     .controller('UpgradesController', function($scope, $rootScope, Util, UtilBoot, UpgradesData, UpgradesLogic, Player) {
 
@@ -286,7 +194,7 @@ angular.module('Upgrades', ['Util'])
                 return (Object.keys(UpgradesData.owned).length-1) || '-';
             },
             upgrade: function(upgradeId) {
-                return UpgradesData.defs.upgrades[upgradeId] || {};
+                return UpgradesData.defs[upgradeId] || {};
             },
             nextPrice: function(upgradeId) {
                 return UpgradesLogic.nextPrice(upgradeId);

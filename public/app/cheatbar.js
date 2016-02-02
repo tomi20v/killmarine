@@ -7,18 +7,6 @@ angular.module('CheatBar', ['Saver', 'Util', 'Ticker', 'Player'])
             cheat: function() {
                 PlayerData.frags *= 123;
             },
-            burn: function() {
-                $rootScope.$emit('Monsters.registerMod', {
-                    filter: function(monster) {
-                        return true;
-                    },
-                    path: 'price',
-                    fn: function(oldFn) {
-                        return 0.1 * oldFn();
-                    },
-                    timeout: 2000
-                });
-            },
             tick: function() {
                 Ticker();
             },
@@ -33,6 +21,9 @@ angular.module('CheatBar', ['Saver', 'Util', 'Ticker', 'Player'])
             },
             save: function() {
                 Saver.save();
+            },
+            restart: function() {
+                $rootScope.$emit('Game.restart');
             }
         });
 

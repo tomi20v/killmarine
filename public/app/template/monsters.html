@@ -1,5 +1,6 @@
 <div class="btn-group-vertical monsters-container" role="group">
   <button ng-repeat="monster in getAvailableMonsters()"
+          ng-if="monster.available"
           ng-disabled="!canBuyNext(monster.id)"
           ng-click="buy(monster.id)"
           type="button"
@@ -11,5 +12,5 @@
 </div>
 
 <button class="cycle half center-block btn btn-info" ng-click="cycleBuyAtOnce()">
-  BUY<span class="badge pull-right">{{ buyAtOnce }}</span>
+  BUY<span class="badge pull-right">{{ buyAtOnce ? buyAtOnce : 'max' }}</span>
 </button>

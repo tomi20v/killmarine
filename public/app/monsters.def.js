@@ -50,7 +50,7 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 name: 'Commando',
                 id: 'cmmd',
                 buyable: {
-                    price: 70,
+                    price: 2400,
                     q: 1.06
                 },
                 fps: {
@@ -74,7 +74,7 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 name: 'Imp',
                 id: 'imp',
                 buyable: {
-                    price: 30,
+                    price: 90,
                     q: 1.08
                 },
                 fps: {
@@ -143,7 +143,7 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 id: 'caco',
                 buyable: {
                     price: 400,
-                    q: 1
+                    q: 1.26
                 },
                 fps: {
                     hit: 10,
@@ -158,7 +158,7 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 ammo: 'rocket',
                 available: false,
-                tags: ['all', 'caco']
+                tags: ['all', 'caco', 'episode1']
             },
             hell: {
                 name: 'Hell Knight',
@@ -181,7 +181,7 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 ammo: 'rocket',
                 aps: 1,
                 available: false,
-                tags: ['all', 'hell']
+                tags: ['all', 'hell', 'episode2']
             },
             baro: {
                 name: 'Baron of hell',
@@ -203,7 +203,7 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 ammo: 'rocket',
                 available: false,
-                tags: ['all', 'baro']
+                tags: ['all', 'baro', 'episode3']
             },
 
             demn: {
@@ -227,7 +227,7 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 ammo: null,
                 aps: null,
                 available: false,
-                tags: ['all', 'demn']
+                tags: ['all', 'demn', 'episode1']
             },
             lost: {
                 name: 'Lost Soul',
@@ -250,7 +250,7 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 ammo: null,
                 aps: null,
                 available: false,
-                tags: ['all', 'lost']
+                tags: ['all', 'lost', 'episode2']
             },
             arch: {
                 name: 'Arch-Vile',
@@ -272,7 +272,7 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 ammo: null,
                 available: false,
-                tags: ['all', 'arch']
+                tags: ['all', 'arch', 'episode3']
             },
 
             spdm: {
@@ -295,7 +295,7 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 ammo: 'plasma',
                 available: false,
-                tags: ['all', 'spdm']
+                tags: ['all', 'spdm', 'episode1']
             },
             artr: {
                 name: 'Arachnotron',
@@ -318,7 +318,7 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 ammo: 'plasma',
                 aps: 1,
                 available: false,
-                tags: ['all', 'artr']
+                tags: ['all', 'artr', 'episode2']
             },
             cybd: {
                 name: 'Cyberdemon',
@@ -340,7 +340,7 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 ammo: 'plasma',
                 available: false,
-                tags: ['all', 'cybd']
+                tags: ['all', 'cybd', 'episode3']
             },
 
             icon: {
@@ -364,7 +364,7 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 ammo: null,
                 aps: null,
                 available: false,
-                tags: ['all', 'icon']
+                tags: ['all', 'icon', 'episode4']
             }
         },
         available: {
