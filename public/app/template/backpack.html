@@ -1,0 +1,16 @@
+
+  <div class="backpack-container">
+    <div class="progress-container" ng-repeat="(item, cnt) in items()">
+      <div class="progress">
+        <span class="info">{{item}}:</span>
+        <span class="info-cnt">{{ cnt | BigPrint }}/{{ getMax(item) | BigPrint }}</span>
+        <div role="progressbar"
+             ng-class="{
+              'progress-bar': true,
+              'progress-bar-danger': onMax(item),
+              'progress-bar-striped': true
+             }"
+             ng-style="{width: getWidth(item) + '%'}"></div>
+      </div>
+    </div>
+  </div>

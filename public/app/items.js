@@ -1,24 +1,19 @@
 angular.module('Items', ['Util'])
     .service('ItemsDefs', function() {
-        var backpackItems = {
-            clip: 0,
-            shell: 0,
-            rocket: 0
-        }
-        ;
         return {
-            backpackItems: function() {
-                return angular.copy(backpackItems);
+            backpackItems: {
+                clip: 0,
+                shell: 0,
+                rocket: 0,
+                cell: 0
             }
-        }
+        };
     })
     .service('ItemsBackpack', function(UtilMath, ItemsDefs) {
 
-        var logic = {
-        },
-        backpack = {
-            items: ItemsDefs.backpackItems(),
-            max: ItemsDefs.backpackItems()
+        var backpack = {
+            items: ItemsDefs.backpackItems,
+            max: ItemsDefs.backpackItems
         };
 
         return {
@@ -54,10 +49,14 @@ angular.module('Items', ['Util'])
                     what.items[i] = Math.min(what.items[i] * mul, max);
                 });
             },
-            getRandom: function(level) {
+            getRandom: function(monsterBackpack, mul) {
                 var backpack = this.instance();
-                backpack.items.clip = UtilMath.randomInt(0, Math.pow(1.1, level));
-                backpack.items.shell = UtilMath.randomInt(0, Math.pow(1.2, level));
+                angular.forEach(monsterBackpack.items, function(cnt, itemId) {
+                    backpack.items[itemId] += UtilMath.randomInt(
+                        monsterBackpack.guaranteed || 0,
+                        mul * cnt * Math.pow(1.1, monsterBackpack.level || 0)
+                    );
+                });
                 return backpack;
             }
         }

@@ -29,7 +29,7 @@
     margin-right: -24%;
 }
 
-.progress-container {
+.doomguy-container .progress-container {
     position: relative;
     width: 90%;
     left: 5%;
@@ -119,4 +119,36 @@
 }
 .upgrades-container button .price {
     float: right; clear: none;
+}
+
+/** backpack */
+.backpack-container {
+    display: block;
+    overflow: auto;
+    padding-top: 1em;
+}
+.backpack-container .progress-container {
+    width: 46%;
+    margin-left: 2%;
+    margin-right: 2%;
+    float: left;
+    clear: none;
+    position: relative;
+}
+.backpack-container .progress {
+    margin-top: 0;
+    margin-bottom: 0.5em;
+}
+.backpack-container .progress-bar {
+    text-align: left;
+    padding-left: 1em;
+    color: black;
+}
+.backpack-container .progress .info {
+    position: absolute;
+    left: 0.25em;
+}
+.backpack-container .progress .info-cnt {
+    position: absolute;
+    right: 0.25em;
 }

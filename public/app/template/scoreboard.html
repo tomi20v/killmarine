@@ -13,11 +13,28 @@
       <span class="c1 pre">{{ player('tops.total.frags') | BigPrint }}</span>
     </li>
     <li class="list-group-item">
+      <span class="c0">Fps:</span>
+      <span class="c1 pre">{{ meta('fps') | BigPrint }}</span>
+      <span class="c1 pre">{{ meta('tops.top.fps') | BigPrint }}</span>
+    </li>
+    <li class="list-group-item">
       <span class="c0">Monsters:</span>
       <span class="c1 pre">{{ monsters('ownedAll') | BigPrint }}</span>
       <span class="c1 pre">{{ monsters('tops.top.ownedAll') | BigPrint }}</span>
       <span class="c1 pre">{{ monsters('tops.total.ownedAll') | BigPrint }}</span>
     </li>
+    <li class="list-group-item">
+      <span class="c0">Frags by monsters:</span>
+      <span class="c1 pre">{{ monsters('frags.byMonstersAll') | BigPrint }}</span>
+      <span class="c1 pre">{{ monsters('tops.top.frags.byMonstersAll') | BigPrint }}</span>
+      <span class="c1 pre">{{ monsters('tops.total.frags.byMonstersAll') | BigPrint }}</span>
+    </li>
+    <!--<li class="list-group-item">-->
+      <!--<span class="c0">Monsters:</span>-->
+      <!--<span class="c1 pre">{{ monsters('ownedAll') | BigPrint }}</span>-->
+      <!--<span class="c1 pre">{{ monsters('tops.top.ownedAll') | BigPrint }}</span>-->
+      <!--<span class="c1 pre">{{ monsters('tops.total.ownedAll') | BigPrint }}</span>-->
+    <!--</li>-->
     <li class="list-group-item">
       <span class="c0">Upgrades:</span>
       <span class="c1 pre">{{ upgrades('ownedAll') | BigPrint }}</span>
@@ -44,7 +61,7 @@
     </li>
     <li class="list-group-item">
       <span class="c0">Game started:</span>
-      <span class="c1 pre">{{ timeDiff(meta('gameStamp')) | TimePrint }} ago</span>
+      <span class="c1 pre">{{ timeDiff(meta('gameStamp')) | TimePrint }}</span>
       <span class="c1">First played:</span>
       <span class="c1 pre">{{ timeDiff(meta('firstStamp')) | TimePrint }}</span>
     </li>

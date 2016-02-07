@@ -18,10 +18,24 @@ angular.module('Monsters')
         };
 
         return function(data) {
+            angular.merge(data, {
+                owned: {},
+                ownedAll: 0,
+                // these are cached values, no need to save unless plan changes
+                defs: {},
+                frags: {
+                    byMonstersAll: 0,
+                    byMonstersHit: 0,
+                    byMonstersShoot: 0,
+                    byMonsters: {},
+                    byMarineFrags: 0
+                }
+            });
             angular.forEach(MonstersDef.monsters, function(monster) {
                 var monsterCpy = angular.extend({}, monster);
                 data.owned[monster.id] = 0;
                 data.defs[monster.id] = monsterBuilder(monsterCpy);
+                data.frags.byMonsters[monster.id] = 0;
             });
             console.log(data);
         }
@@ -31,17 +45,12 @@ angular.module('Monsters')
         UtilData, MonstersDef, MonstersBuilder, MonstersLoader
     ) {
 
-        var data = {
-                owned: {},
-                ownedAll: 0,
-                // these are cached values, no need to save unless plan changes
-                defs: {}
-            },
-            fields = ['owned', 'ownedAll'];
+        var data = {},
+            fields = ['owned', 'ownedAll', 'frags'];
 
         MonstersBuilder(data);
 
-        UtilData.buildDataTop(data, fields);
+        UtilData.buildDataTopSum(data, fields);
 
         MonstersLoader(data, fields.concat('tops'));
 
@@ -67,12 +76,12 @@ angular.module('Monsters')
 
     })
     .service('MonstersLogic', function(
-        $rootScope, UtilData, UtilMath, MonstersDef, MonstersBuilder, MonstersData, Player
+        $rootScope, Util, UtilData, UtilMath, MonstersDef, MonstersBuilder, MonstersData, Player
     ) {
 
         var buy = function(monsterId, cnt, price) {
 
-            var newOwned = MonstersData.topsAdd(['owned', monsterId], cnt),
+            var newOwned = MonstersData.topsAdd(['owned', monsterId], cnt);
                 newTotal = MonstersData.topsAdd(['ownedAll'], cnt);
 
             $rootScope.$emit('Monsters.bought', {
@@ -120,7 +129,7 @@ angular.module('Monsters')
 
                 $rootScope.$emit('Player.spend', {
                     frags: nextPrice,
-                    callback: function() {
+                    success: function() {
                         buy(monsterId, cnt, nextPrice);
                         if (successCallback) {
                             successCallback();
@@ -133,7 +142,21 @@ angular.module('Monsters')
                 MonstersBuilder(MonstersData);
             },
             onMonsterAvailable: function(event, eventData) {
-//                console.log('x', eventData);
+                var ids = Util.idsByTags(MonstersData.defs, eventData.tags);
+                angular.forEach(ids, function(id) {
+                    MonstersData.defs[id].available = true;
+                });
+            },
+            onTick: function(event, tick) {
+                angular.forEach(tick.monsters, function(monster, monsterId) {
+                    MonstersData.topsAdd(
+                        ['frags', 'byMonsters', monsterId],
+                        monster.frags.total
+                    );
+                });
+                MonstersData.topsAdd('frags.hit', tick.frags.hit);
+                MonstersData.topsAdd('frags.shoot', tick.frags.shoot);
+                MonstersData.topsAdd('frags.byMonstersAll', tick.frags.hit + tick.frags.shoot);
             }
         };
 
@@ -142,6 +165,7 @@ angular.module('Monsters')
         //$rootScope.$on('Monsters.registerMod', angular.bind(Monsters, Monsters.registerMod));
         $rootScope.$on('Game.restart', angular.bind(MonstersLogic, MonstersLogic.onGameRestart));
         $rootScope.$on('Monsters.available', angular.bind(MonstersLogic, MonstersLogic.onMonsterAvailable));
+        $rootScope.$on('Ticker.tick', angular.bind(MonstersLogic, MonstersLogic.onTick));
     })
     .controller('MonstersController', function(
         $scope, $rootScope,

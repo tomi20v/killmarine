@@ -128,7 +128,7 @@ angular.module('Upgrades')
             $timeout(function() {
                 $rootScope.$emit('Player.spend', {
                     frags: price,
-                    callback: function () {
+                    success: function () {
 
                         UpgradesData.owned.push(upgradeId);
                         UpgradesData.topsAdd('ownedAll', 1);

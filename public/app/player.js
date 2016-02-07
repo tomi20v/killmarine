@@ -27,6 +27,8 @@ angular.module('Player', [
 
         data.backpack.max.clip = 200;
         data.backpack.max.shell = 50;
+        data.backpack.max.rocket = 50;
+        data.backpack.max.cell = 300;
 
         PlayerLoader(data);
 
@@ -49,6 +51,13 @@ angular.module('Player', [
     .service('PlayerLogic', function(Util, ItemsBackpack, PlayerData) {
 
         return {
+            onGameRestart: function() {
+
+                angular.forEach(PlayerData.backpack.items, function(cnt, key) {
+                    PlayerData.backpack.items[key] = 0;
+                });
+
+            },
             onMarineDie: function(event, eventData) {
 
                 // @todo I should receive many frags depending on player level?
@@ -70,32 +79,45 @@ angular.module('Player', [
             onSpend: function(event, eventData) {
                 if (eventData.frags <= PlayerData.frags) {
                     PlayerData.frags = PlayerData.frags - eventData.frags;
-                    if (eventData.callback) {
-                        eventData.callback();
+                    if (eventData.success) {
+                        eventData.success();
                     }
                 }
+            },
+            onTick: function(event, tick) {
+                PlayerData.topsAdd('frags', tick.frags.total);
+                //console.log(tick.backpack);
+                //PlayerData.topsAdd('backpack', tick.backpack);
             }
         };
 
     })
     .run(function($rootScope, PlayerLogic) {
+
+        $rootScope.$on('Game.restart', angular.bind(PlayerLogic, PlayerLogic.onGameRestart));
         $rootScope.$on('Marine.die', angular.bind(PlayerLogic, PlayerLogic.onMarineDie));
         $rootScope.$on('Player.spend', angular.bind(PlayerLogic, PlayerLogic.onSpend));
+        $rootScope.$on('Ticker.tick', angular.bind(PlayerLogic, PlayerLogic.onTick));
+
     })
-    //.controller('PlayerBackpack', function($scope, $rootScope, PlayerData) {
-    //
-    //    angular.merge($scope, {
-    //        items: function(what) {
-    //            //return PlayerData.data('backpack.items.' + what) || 0;
-    //            return PlayerData.backpack.items[what] || 0;
-    //        },
-    //        onMax: function(what) {
-    //            //return PlayerData.data('backpack.max.' + what) &&
-    //            //    PlayerData.data('backpack.items.' + what) == PlayerData.data('backpack.max.' + what);
-    //            return PlayerData.backpack.max[what] &&
-    //                PlayerData.backpack.items[what] == PlayerData.backpack.max[what];
-    //        }
-    //    });
-    //
-    //})
+    .controller('PlayerBackpackController', function($scope, $rootScope, PlayerData) {
+
+        angular.merge($scope, {
+            items: function() {
+                console.log(PlayerData.backpack.items);
+                return PlayerData.backpack.items || 0;
+            },
+            getMax: function(item) {
+                return PlayerData.backpack.max[item] || 0;
+            },
+            onMax: function(item) {
+                var max = this.getMax(item);
+                return max && PlayerData.backpack.items[item] == max;
+            },
+            getWidth: function(item) {
+                return 100 * PlayerData.backpack.items[item] / PlayerData.backpack.max[item];
+            }
+        });
+
+    })
 ;

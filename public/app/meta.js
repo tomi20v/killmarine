@@ -10,12 +10,13 @@ angular.module('Meta', ['Util'])
             clicks: 0,
             usefulClicks: 0,
             playTime: 0,
+            fps: 0,
             gameStamp: null,
             sessionStamp: null,
             firstStamp: null
         };
 
-        UtilData.buildDataTop(data, ['clicks', 'usefulClicks', 'playTime']);
+        UtilData.buildDataTop(data, ['clicks', 'usefulClicks', 'playTime', 'fps']);
 
         MetaLoader(data);
 
@@ -41,7 +42,7 @@ angular.module('Meta', ['Util'])
         }
 
     })
-    .service('MetaLogic', function($rootScope, MetaData) {
+    .service('MetaLogic', function($rootScope, Util, MetaData) {
 
         return {
             onUsefulClick: function(){
@@ -55,8 +56,10 @@ angular.module('Meta', ['Util'])
                     $rootScope.$apply();
                 //}
             },
-            onTick: function(tick) {
+            onTick: function(event, tick) {
                 MetaData.topsAdd('playTime', 1);
+                MetaData.fps = tick.fps;
+                Util.deepSetMax(MetaData, 'tops.top.fps', tick.fps);
             }
         }
 

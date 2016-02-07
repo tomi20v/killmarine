@@ -80,6 +80,7 @@ angular.module('Util', [])
                         anyGameSum: cpy
                     },
                     topsAdd: function(index, value) {
+                        value = value || 0;
                         var newVal = Util.deepAddMin(this, index, value, 0),
                             // max in any game
                             newTop = Util.deepSetMax(this.tops.top, index, newVal),
@@ -99,13 +100,20 @@ angular.module('Util', [])
                 angular.extend(data, {
                     tops: {
                         top: angular.copy(cpy),
-                        total: cpy
+                        total: angular.copy(cpy),
+                        thisGameSum: angular.copy(cpy),
+                        anyGameSum: cpy
                     },
                     topsAdd: function(index, value) {
+                        value = value || 0;
                         var newVal = Util.deepAdd(this, index, value),
                             t = Util.deepAddMin(this.tops.top, index, value, newVal);
                         Util.deepAddMin(this.tops.total, index, value, t);
                         return newVal;
+                        //var newVal = Util.deepAdd(this, index, value),
+                        //    newTop = Util.deepAddMin(this.tops.top, index, value, newVal),
+                        //    newSum =
+                        //    ;
                     }
                 });
                 return this;
@@ -122,7 +130,10 @@ angular.module('Util', [])
 
             },
             sumGeoSeq: function(a1, q, n) {
-                if (q == 1) {
+                if (n == 0) {
+                    return 0;
+                }
+                else if (q == 1) {
                     return a1;
                 }
                 else {
@@ -162,7 +173,8 @@ angular.module('Util', [])
                 }
 
                 if (sec > 86400) {
-                    p0 = Math.floor(sec / 86400) + 'D';
+                    p0 = Math.floor(sec / 86400) + 'd';
+                    sec = sec % 86400;
                 }
 
                 angular.forEach([3600, 60, 1], p);
@@ -170,7 +182,7 @@ angular.module('Util', [])
                 return p0 + parts.join(':');
 
             },
-            playTime: function() {
+            playTime: function(){
                 return playTime;
             },
             onTick: function(event, tick) {
@@ -226,7 +238,7 @@ angular.module('Util', [])
                 return ret;
             },
             deepAddMin: function(data, path, value, min) {
-                var current = this.lookUp(data, path), ret;
+                var current = this.lookUp(data, path) || 0, ret;
                 if (angular.isFunction(current.add)) {
                     ret = current.add(value);
                 }
@@ -238,6 +250,18 @@ angular.module('Util', [])
                     );
                 }
                 return ret;
+            },
+            idsByTags: function(data, tags) {
+                var ids = [];
+                angular.forEach(tags, function(tag) {
+                    angular.forEach(data, function(item) {
+                        if (ids.indexOf(item.id) != -1);
+                        else if (item.tags && (item.tags.indexOf(tag) != -1)) {
+                            ids.push(item.id);
+                        }
+                    })
+                });
+                return ids;
             }
         }
 

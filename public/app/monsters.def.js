@@ -14,6 +14,7 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 backpack: {
                     level: 1,
+                    guaranteed: 0.5,
                     items: {
                         clip: 1
                     }
@@ -36,8 +37,8 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 backpack: {
                     level: 1,
+                    guaranteed: 0.4,
                     items: {
-                        clip: 1,
                         shell: 1
                     }
                 },
@@ -59,6 +60,7 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 backpack: {
                     level: 1,
+                    guaranteed: 0.5,
                     items: {
                         clip: 1,
                         shell: 1
@@ -83,6 +85,7 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 backpack: {
                     level: 1,
+                    guaranteed: 0.8,
                     items: {
                         clip: 1,
                         shell: 1
@@ -112,6 +115,7 @@ angular.module('Monsters', ['Util','Saver','Player'])
                     }
                 },
                 ammo: 'rocket',
+                aps: 5,
                 available: false,
                 tags: ['all', 'manc']
             },
@@ -134,6 +138,7 @@ angular.module('Monsters', ['Util','Saver','Player'])
                     }
                 },
                 ammo: 'rocket',
+                aps: 10,
                 available: false,
                 tags: ['all', 'rev']
             },
@@ -157,7 +162,8 @@ angular.module('Monsters', ['Util','Saver','Player'])
                     }
                 },
                 ammo: 'rocket',
-                available: false,
+                aps: 10,
+                available: true,
                 tags: ['all', 'caco', 'episode1']
             },
             hell: {
@@ -202,6 +208,7 @@ angular.module('Monsters', ['Util','Saver','Player'])
                     }
                 },
                 ammo: 'rocket',
+                aps: 10,
                 available: false,
                 tags: ['all', 'baro', 'episode3']
             },
@@ -271,6 +278,7 @@ angular.module('Monsters', ['Util','Saver','Player'])
                     }
                 },
                 ammo: null,
+                aps: null,
                 available: false,
                 tags: ['all', 'arch', 'episode3']
             },
@@ -294,6 +302,7 @@ angular.module('Monsters', ['Util','Saver','Player'])
                     }
                 },
                 ammo: 'plasma',
+                aps: 40,
                 available: false,
                 tags: ['all', 'spdm', 'episode1']
             },
@@ -339,6 +348,7 @@ angular.module('Monsters', ['Util','Saver','Player'])
                     }
                 },
                 ammo: 'plasma',
+                aps: 666,
                 available: false,
                 tags: ['all', 'cybd', 'episode3']
             },
