@@ -60,13 +60,23 @@ angular.module('Meta', ['Util'])
                 MetaData.topsAdd('playTime', 1);
                 MetaData.fps = tick.fps;
                 Util.deepSetMax(MetaData, 'tops.top.fps', tick.fps);
+            },
+            onGameRestart: function() {
+                angular.merge(MetaData, {
+                    playtime: 0,
+                    fps: 0,
+                    clicks: 0,
+                    usefulClicks: 0,
+                    gameStamp: new Date().getTime()
+                });
             }
         }
 
     })
     .run(function($rootScope, $document, MetaLogic) {
-        $rootScope.$on('Meta.usefulClick', angular.bind(MetaLogic, MetaLogic.onUsefulClick));
-        $rootScope.$on('Ticker.tick', angular.bind(MetaLogic, MetaLogic.onTick));
+        $rootScope.$on('Meta.usefulClick', MetaLogic.onUsefulClick);
+        $rootScope.$on('Ticker.tick', MetaLogic.onTick);
+        $rootScope.$on('Game.restart', MetaLogic.onGameRestart);
         $document.on('click', angular.bind(MetaLogic, MetaLogic.onClick));
     })
 ;

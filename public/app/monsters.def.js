@@ -14,9 +14,9 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 backpack: {
                     level: 1,
-                    guaranteed: 0.5,
+                    guaranteed: 0.6,
                     items: {
-                        clip: 1
+                        clip: 2
                     }
                 },
                 ammo: 'clip',
@@ -37,13 +37,13 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 backpack: {
                     level: 1,
-                    guaranteed: 0.4,
+                    guaranteed: 0.2,
                     items: {
-                        shell: 1
+                        shell: 0.5
                     }
                 },
                 ammo: 'shell',
-                aps: 1,
+                aps: 2,
                 available: true,
                 tags: ['all', 'sarg']
             },

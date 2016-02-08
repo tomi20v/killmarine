@@ -4,7 +4,7 @@ angular.module('Ticker', ['Util', 'Player', 'Monsters', 'Items'])
     .service('TickCalculator', function(UtilMath, ItemsBackpack) {
 
         var fpsSamples = 1,
-            maxFpsSamples = 100,
+            maxFpsSamples = 25,
             frags = {
                 hit: function (cnt, fps) {
                     var guaranteed = 0.5;
@@ -25,9 +25,11 @@ angular.module('Ticker', ['Util', 'Player', 'Monsters', 'Items'])
 
                         var monsterDef = Monsters.data(['defs', monsterId]),
                             ammoId = monsterDef.ammo,
+                            ammoIfAllShoots = Math.floor((monsterDef.aps || 0) * monsterCnt),
+                            ammoMaxAvail = tick.availableAmmo.items[ammoId] - (tick.availableAmmo.items[ammoId] % (monsterDef.aps || 1)),
                             ammoUsed = Math.min(
-                                Math.floor((monsterDef.aps || 0) * Math.pow(1.1, monsterCnt)),
-                                tick.availableAmmo.items[ammoId] - (tick.availableAmmo.items[ammoId] % (monsterDef.aps || 1))
+                                ammoIfAllShoots,
+                                ammoMaxAvail
                             ),
                             shootingCnt = ammoUsed / monsterDef.aps,
                             hittingCnt = monsterCnt - shootingCnt
@@ -53,14 +55,11 @@ angular.module('Ticker', ['Util', 'Player', 'Monsters', 'Items'])
             calculateFrags: function(tick, Monsters) {
                 var othis = this;
                 angular.forEach(tick.monsters, function(data, monsterId) {
-                    othis.calculateFrag(tick, data, Monsters.data(['defs', monsterId]));
-                    tick.frags.hit += data.frags.hitFrags;
-                    tick.frags.shoot += data.frags.shootFrags;
-                    tick.frags.total += data.frags.hitFrags + data.frags.shootFrags;
+                    othis.calculateDataFrag(data, Monsters.data(['defs', monsterId]));
+                    othis.calculateTickFrag(tick, data);
                 });
-
             },
-            calculateFrag: function(tick, data, monsterDef) {
+            calculateDataFrag: function(data, monsterDef) {
 
                 var hitFrags = frags.hit(data.cnt.hitting, monsterDef.fps.hit),
                     shootFrags = frags.shoot(data.cnt.shooting, monsterDef.fps.shoot);
@@ -72,12 +71,17 @@ angular.module('Ticker', ['Util', 'Player', 'Monsters', 'Items'])
                 };
 
             },
+            calculateTickFrag: function(tick, data) {
+                tick.frags.hit += data.frags.hit;
+                tick.frags.shoot += data.frags.shoot;
+                tick.frags.total += data.frags.hit + data.frags.shoot;
+            },
             calculateBackpacks: function(tick, Monsters) {
                 angular.forEach(tick.monsters, function (data, monsterId) {
                     var monster = Monsters.data(['defs', monsterId]),
-                        backpack = ItemsBackpack.getRandom(monster.backpack, data.frags.total);
+                        backpack = ItemsBackpack.getRandomBySample(monster.backpack, data.frags.total);
                     tick.monsters[monsterId].backpack = backpack;
-                    ItemsBackpack.add(tick.backpack, backpack);
+                    tick.backpack.add(backpack);
                 });
             },
             calculateFps: function(tick, oldTick) {
@@ -85,7 +89,11 @@ angular.module('Ticker', ['Util', 'Player', 'Monsters', 'Items'])
                 // increase samples only if samples < frags because with low frags and high samples it is too biased
                 if ((fpsSamples < tick.fps) && (fpsSamples < maxFpsSamples)) {
                     fpsSamples++;
+                    tick.fps = Math.floor((tick.fps *(fpsSamples - 1) + tick.frags.total)/fpsSamples);
                 }
+            },
+            resetFpsSamples: function() {
+                fpsSamples = 3;
             }
         }
 
@@ -130,6 +138,8 @@ angular.module('Ticker', ['Util', 'Player', 'Monsters', 'Items'])
         TickerLoader(oldTick);
 
         $rootScope.$on('Game.restart', angular.bind(logic, logic.onGameRestart));
+        $rootScope.$on('Monsters.bought', angular.bind(TickCalculator, TickCalculator.resetFpsSamples));
+        $rootScope.$on('Upgrades.bought', angular.bind(TickCalculator, TickCalculator.resetFpsSamples));
 
         return function() {
 
@@ -146,11 +156,12 @@ angular.module('Ticker', ['Util', 'Player', 'Monsters', 'Items'])
             TickCalculator.calculateFps(tick, oldTick);
             TickCalculator.calculateBackpacks(tick, Monsters);
 
-            tick.processTime = new Date().getTime() - tick.tstamp;
+            tick.tick.processTime = new Date().getTime() - tick.tick.tstamp;
 
             oldTick = tick;
 
             $rootScope.$emit('Ticker.tick', tick);
+
         }
 
     })

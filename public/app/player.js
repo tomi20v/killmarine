@@ -48,7 +48,7 @@ angular.module('Player', [
         }
 
     })
-    .service('PlayerLogic', function(Util, ItemsBackpack, PlayerData) {
+    .service('PlayerLogic', function(Util, PlayerData) {
 
         return {
             onGameRestart: function() {
@@ -56,6 +56,8 @@ angular.module('Player', [
                 angular.forEach(PlayerData.backpack.items, function(cnt, key) {
                     PlayerData.backpack.items[key] = 0;
                 });
+
+                PlayerData.frags = 0;
 
             },
             onMarineDie: function(event, eventData) {
@@ -86,8 +88,7 @@ angular.module('Player', [
             },
             onTick: function(event, tick) {
                 PlayerData.topsAdd('frags', tick.frags.total);
-                //console.log(tick.backpack);
-                //PlayerData.topsAdd('backpack', tick.backpack);
+                PlayerData.topsAdd('backpack', tick.backpack);
             }
         };
 
@@ -104,7 +105,6 @@ angular.module('Player', [
 
         angular.merge($scope, {
             items: function() {
-                console.log(PlayerData.backpack.items);
                 return PlayerData.backpack.items || 0;
             },
             getMax: function(item) {
