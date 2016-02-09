@@ -32,12 +32,12 @@ angular.module('Monsters')
                 }
             });
             angular.forEach(MonstersDef.monsters, function(monster) {
-                var monsterCpy = angular.extend({}, monster);
+                var monsterCpy = angular.extend({}, MonstersDef.monsterProto, monster);
                 data.owned[monster.id] = 0;
                 data.defs[monster.id] = monsterBuilder(monsterCpy);
                 data.frags.byMonsters[monster.id] = 0;
             });
-            console.log(data);
+            return data;
         }
 
     })
@@ -45,10 +45,8 @@ angular.module('Monsters')
         UtilData, MonstersDef, MonstersBuilder, MonstersLoader
     ) {
 
-        var data = {},
+        var data = MonstersBuilder({}),
             fields = ['owned', 'ownedAll', 'frags'];
-
-        MonstersBuilder(data);
 
         UtilData.buildDataTopSum(data, fields);
 
@@ -100,11 +98,10 @@ angular.module('Monsters')
                 var owned = MonstersData.owned[monsterId],
                     buyable = (MonstersData.defs[monsterId].buyable || function(){ return {}; }) (),
                     price = buyable.price,
-                    q = buyable.q;
-                return Math.floor(
-                    UtilMath.sumGeoSeq(price, q, owned + cnt) -
-                    UtilMath.sumGeoSeq(price, q, owned)
-                );
+                    q = buyable.q,
+                    priceWithNextCnt = UtilMath.sumGeoSeq(price, q, owned + cnt)
+                    priceOfowned = UtilMath.sumGeoSeq(price, q, owned);
+                return Math.floor(priceWithNextCnt - priceOfowned);
             },
             maxPrice: function(monsterId) {
                 var cnt = this.maxBuyable(monsterId);
@@ -177,7 +174,8 @@ angular.module('Monsters')
                 return cnt;
             },
             nextPrice: function(monsterId, cnt) {
-                return MonstersLogic.nextPrice(monsterId, cnt);
+                var p = MonstersLogic.nextPrice(monsterId, cnt);
+                return p;
             },
             canBuyNext: function(monsterId, cnt) {
                 var nextPrice = this.nextPrice(monsterId, cnt);
@@ -202,6 +200,7 @@ angular.module('Monsters')
         angular.extend($scope, {
             buyAtOnce: 1,
             strategy: buyStrategy,
+            monsterCnt: {},
             cycleBuyAtOnce: function() {
                 switch (this.buyAtOnce) {
                 case 100:
@@ -239,6 +238,12 @@ angular.module('Monsters')
             nextPrice: function(monsterId) {
                 return this.strategy.nextPrice(monsterId, this.buyAtOnce);
             }
+        });
+
+        $rootScope.$on('Ticker.tick', function(event, tick) {
+            angular.forEach(tick.monsters, function(monster, monsterId) {
+                $scope.monsterCnt[monsterId] = monster.cnt
+            })
         });
 
     })

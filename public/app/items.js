@@ -5,7 +5,9 @@ angular.module('Items', ['Util'])
                 clip: 0,
                 shell: 0,
                 rocket: 0,
-                cell: 0
+                cell: 0,
+                plasma: 0,
+                slug: 0
             }
         };
     })

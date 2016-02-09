@@ -63,12 +63,13 @@ angular.module('Meta', ['Util'])
             },
             onGameRestart: function() {
                 angular.merge(MetaData, {
-                    playtime: 0,
+                    playTime: 0,
                     fps: 0,
                     clicks: 0,
                     usefulClicks: 0,
                     gameStamp: new Date().getTime()
                 });
+                console.log(MetaData);
             }
         }
 

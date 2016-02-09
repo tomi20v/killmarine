@@ -1,5 +1,30 @@
 angular.module('Monsters', ['Util','Saver','Player'])
     .constant('MonstersDef', {
+        monsterProto: {
+            name: '',
+            id: '',
+            buyable: {
+                price: 0,
+                q: 0
+            },
+            fps: {
+                hit: 0,
+                shoot: 0
+            },
+            backpack: {
+                level: 1,
+                items: {
+                    clip: 0,
+                    shell: 0,
+                    rocket: 0,
+                    cell: 0
+                }
+            },
+            ammo: null,
+            aps: 0,
+            available: false,
+            tags: []
+        },
         monsters: {
             zomb: {
                 name: 'Zombieman',

@@ -107,8 +107,10 @@ angular.module('Util', [])
                     topsAdd: function(index, value) {
                         value = value || 0;
                         var newVal = Util.deepAdd(this, index, value),
-                            t = Util.deepAddMin(this.tops.top, index, value, newVal);
+                            //t = Util.deepAddMin(this.tops.top, index, value, newVal);
+                            t = Util.deepSetMax(this.tops.top, index, newVal);
                         Util.deepAddMin(this.tops.total, index, value, t);
+                        //Util.deepSetMax(this.tops.total, index, t);
                         return newVal;
                         //var newVal = Util.deepAdd(this, index, value),
                         //    newTop = Util.deepAddMin(this.tops.top, index, value, newVal),
@@ -130,23 +132,33 @@ angular.module('Util', [])
 
             },
             sumGeoSeq: function(a1, q, n) {
-                if (n == 0) {
+                if (q == 0) {
+                    return 0;
+                }
+                else if (n == 0) {
                     return 0;
                 }
                 else if (q == 1) {
-                    return a1;
+                    return a1 * n;
                 }
                 else {
                     return a1 * (Math.pow(q, n) - 1) / (q - 1);
                 }
             },
             sumGeoSeqSlice: function(a1, q, n1, n2) {
+                if (!q) {
+                    console.log('NOTICE undefined q');
+                    return 0;
+                }
                 return (Math.pow(q, n2) - Math.pow(q, n1-1)) * a1 / (q - 1);
             },
             sumGeoSeqFloor: function(a1, q, n) {
                 return Math.floor(this.sumGeoSeq(a1, q, n));
             },
             seqNBySum: function(sum, a1, q) {
+                if (q == 0) {
+                    return 0;
+                }
                 return Math.floor(
                     Math.log(1 - (1 - q) * sum / a1) / Math.log(q)
                 );

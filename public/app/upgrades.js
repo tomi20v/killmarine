@@ -4,29 +4,34 @@ angular.module('Upgrades')
         return UtilData.buildDataGetterService(UpgradesData);
 
     })
+    .service('UpgradesBuilder', function(UpgradesDef) {
+
+        return function(data) {
+
+            angular.extend(data, {
+                owned: [],
+                ownedAll: 0,
+                buyTimes: {},
+                available: [],
+                // I could put a real builder function here like in monsters, but upgrades currently are not mutable
+                defs: angular.copy(UpgradesDef.upgrades)
+            });
+
+            return data;
+
+        }
+
+    })
     .service('UpgradesData', function(
-        UtilData, UpgradesLoader, UpgradesDef
+        UtilData, UpgradesBuilder, UpgradesLoader, UpgradesDef
     ) {
 
-        var data = {
-            owned: [],
-            ownedAll: 0,
-            buyTimes: {},
-            available: [],
-            defs: {}
-        };
+        var data = UpgradesBuilder({}),
+            fields = ['owned', 'ownedAll', 'buyTimes', 'tops'];
 
-        angular.forEach(UpgradesDef, function(value, key) {
-            data.owned[key] = 0;
-        });
+        UtilData.buildDataTop(data, fields);
 
-        UtilData.buildDataTop(data);
-
-        UpgradesLoader(data);
-
-        angular.extend(data, {
-            defs: angular.copy(UpgradesDef.upgrades)
-        });
+        UpgradesLoader(data, fields.concat('tops'));
 
         return data;
 
@@ -35,9 +40,9 @@ angular.module('Upgrades')
 
         var saveKey = 'Upgrades';
 
-        return function(data) {
+        return function(data, fields) {
 
-            Saver.register(saveKey, data, ['owned', 'ownedAll', 'buyTimes', 'tops']);
+            Saver.register(saveKey, data, fields);
 
             angular.merge(data, Saver.load(saveKey));
 
@@ -45,7 +50,9 @@ angular.module('Upgrades')
 
     })
     .service('UpgradesLogic', function(
-        $rootScope, $timeout, UtilData, UtilTime, UpgradesDef, UpgradesData, Upgrades, Monsters, Player, Meta
+        $rootScope, $timeout, UtilTime,
+        UpgradesBuilder, UpgradesDef, UpgradesData, Upgrades,
+        Monsters, Player, Meta
     ) {
 
         var service = {
@@ -109,6 +116,9 @@ angular.module('Upgrades')
                 angular.forEach(UpgradesData.available, function(upgradeId) {
                     buy(upgradeId, callback);
                 })
+            },
+            onGameRestart: function() {
+                UpgradesBuilder(UpgradesData);
             }
         },
         allSecrets = function(secrets) {
@@ -161,6 +171,7 @@ angular.module('Upgrades')
         var refresh = angular.bind(UpgradesLogic, UpgradesLogic.refresh);
         $rootScope.$on('Ticker.tick', refresh);
         $rootScope.$on('Monsters.bought', refresh);
+        $rootScope.$on('Game.restart', angular.bind(UpgradesLogic, UpgradesLogic.onGameRestart));
     })
     .controller('UpgradesController', function($scope, $rootScope, Util, UtilBoot, UpgradesData, UpgradesLogic, Player) {
 
@@ -191,7 +202,7 @@ angular.module('Upgrades')
                 return UpgradesData.owned;
             },
             ownedCnt: function() {
-                return (Object.keys(UpgradesData.owned).length-1) || '-';
+                return Object.keys(UpgradesData.owned).length || '-';
             },
             upgrade: function(upgradeId) {
                 return UpgradesData.defs[upgradeId] || {};

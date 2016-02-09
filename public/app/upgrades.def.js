@@ -90,7 +90,8 @@ angular.module('Upgrades', [])
                     description: 'Own more than 255 monsters',
                     price: 16536,
                     requires: ['upgrades1'],
-                    reqSecret: ['monsterOverflow8']
+                    reqSecret: ['monsterOverflow8'],
+                    persists: true
                 },
 
                 episode1: {

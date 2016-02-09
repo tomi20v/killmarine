@@ -23,17 +23,32 @@ angular.module('Ticker', ['Util', 'Player', 'Monsters', 'Items'])
 
                     if (monsterCnt) {
 
-                        var monsterDef = Monsters.data(['defs', monsterId]),
-                            ammoId = monsterDef.ammo,
-                            ammoIfAllShoots = Math.floor((monsterDef.aps || 0) * monsterCnt),
-                            ammoMaxAvail = tick.availableAmmo.items[ammoId] - (tick.availableAmmo.items[ammoId] % (monsterDef.aps || 1)),
-                            ammoUsed = Math.min(
-                                ammoIfAllShoots,
-                                ammoMaxAvail
-                            ),
-                            shootingCnt = ammoUsed / monsterDef.aps,
-                            hittingCnt = monsterCnt - shootingCnt
-                            ;
+                        var monsterDef,
+                            ammoId,
+                            ammoIfAllShoots,
+                            ammoMaxAvail,
+                            ammoUsed,
+                            shootingCnt,
+                            hittingCnt;
+
+                        monsterDef = Monsters.data(['defs', monsterId]);
+                        ammoId = monsterDef.ammo;
+
+                        if (!ammoId) {
+                            return;
+                        }
+
+                        if (!monsterDef.aps) {
+                            console.log('NOTICE missing monster def');
+                            return;
+                        }
+
+                        ammoIfAllShoots = Math.floor(monsterDef.aps * monsterCnt);
+                        ammoMaxAvail = tick.availableAmmo.items[ammoId] -
+                            (tick.availableAmmo.items[ammoId] % monsterDef.aps);
+                        ammoUsed = Math.min(ammoIfAllShoots, ammoMaxAvail);
+                        shootingCnt = ammoUsed / monsterDef.aps;
+                        hittingCnt = monsterCnt - shootingCnt;
 
                         tick.monsters[monsterId] = {
                             cnt: {
@@ -72,28 +87,37 @@ angular.module('Ticker', ['Util', 'Player', 'Monsters', 'Items'])
 
             },
             calculateTickFrag: function(tick, data) {
+
                 tick.frags.hit += data.frags.hit;
                 tick.frags.shoot += data.frags.shoot;
                 tick.frags.total += data.frags.hit + data.frags.shoot;
+
             },
             calculateBackpacks: function(tick, Monsters) {
+
                 angular.forEach(tick.monsters, function (data, monsterId) {
                     var monster = Monsters.data(['defs', monsterId]),
                         backpack = ItemsBackpack.getRandomBySample(monster.backpack, data.frags.total);
                     tick.monsters[monsterId].backpack = backpack;
                     tick.backpack.add(backpack);
                 });
+
             },
             calculateFps: function(tick, oldTick) {
+
                 tick.fps = Math.floor((oldTick.fps *(fpsSamples - 1) + tick.frags.total)/fpsSamples);
+
                 // increase samples only if samples < frags because with low frags and high samples it is too biased
                 if ((fpsSamples < tick.fps) && (fpsSamples < maxFpsSamples)) {
                     fpsSamples++;
                     tick.fps = Math.floor((tick.fps *(fpsSamples - 1) + tick.frags.total)/fpsSamples);
                 }
+
             },
             resetFpsSamples: function() {
+
                 fpsSamples = 3;
+
             }
         }
 
