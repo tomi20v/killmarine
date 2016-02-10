@@ -201,6 +201,7 @@ angular.module('Monsters')
             buyAtOnce: 1,
             strategy: buyStrategy,
             monsterCnt: {},
+            shootPcnt: {},
             cycleBuyAtOnce: function() {
                 switch (this.buyAtOnce) {
                 case 100:
@@ -222,6 +223,30 @@ angular.module('Monsters')
             getOwned: function(monsterId) {
                 return MonstersData.owned[monsterId] || 0;
             },
+            getShootingClass: function(monsterId) {
+                var pcnt = $scope.shootPcnt[monsterId] || 0,
+                    cls = {
+                        'progress-bar': true,
+                        'progress-striped': true
+                    };
+                if (pcnt > 95) {
+                    cls['progress-bar-danger'] = true;
+                }
+                else if (pcnt > 80) {
+                    cls['progress-bar-success'] = true;
+                }
+                else if (pcnt > 25) {
+                    cls['progress-bar-warning'] = true;
+                }
+                else {
+                    cls['progress-bar-danger'] = true;
+                }
+                return cls;
+
+            },
+            getShootingWidth: function(monsterId) {
+                return $scope.shootPcnt[monsterId] || 0;
+            },
             canBuyNext: function(monsterId) {
                 return this.strategy.canBuyNext(monsterId, this.buyAtOnce);
             },
@@ -242,7 +267,10 @@ angular.module('Monsters')
 
         $rootScope.$on('Ticker.tick', function(event, tick) {
             angular.forEach(tick.monsters, function(monster, monsterId) {
-                $scope.monsterCnt[monsterId] = monster.cnt
+                $scope.monsterCnt[monsterId] = monster.cnt;
+                $scope.shootPcnt[monsterId] = monster.cnt.total
+                    ? monster.cnt.shooting / monster.cnt.total * 100
+                    : 0;
             })
         });
 

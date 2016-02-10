@@ -7,6 +7,13 @@
           class="full btn btn-primary">
     <span class="name pull-left">{{ monster.name }}</span>
     <span class="owned badge pull-right">{{ getOwned(monster.id) }}</span>
+    <span class="pull-right shooting-container" ng-if="monster.ammo && getOwned(monster.id)">
+      <div class="progress">
+        <div role="progressbar"
+             ng-class="getShootingClass(monster.id)"
+             ng-style="{width: getShootingWidth(monster.id) + '%'}"></div>
+      </div>
+    </span>
     <span class="buy pull-left">buy {{ maxBuyable(monster.id) || 1 }} for {{ nextPrice(monster.id) | BigPrint }}</span>
   </button>
 </div>
