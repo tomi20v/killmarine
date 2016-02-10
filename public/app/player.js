@@ -25,12 +25,14 @@ angular.module('Player', [
 
         UtilData.buildDataTopSum(data);
 
+        PlayerLoader(data);
+
         data.backpack.max.clip = 200;
         data.backpack.max.shell = 50;
         data.backpack.max.rocket = 50;
         data.backpack.max.cell = 300;
-
-        PlayerLoader(data);
+        data.backpack.max.plasma = 150;
+        data.backpack.max.slug = 75;
 
         return data;
 

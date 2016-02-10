@@ -251,9 +251,14 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 backpack: {
                     level: 1,
+                    guaranteed: 0.2,
                     items: {
                         clip: 1,
-                        shell: 1
+                        shell: 1,
+                        rocket: 1,
+                        cell: 1,
+                        plasma: 1,
+                        slug: 1
                     }
                 },
                 ammo: null,

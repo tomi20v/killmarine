@@ -34,21 +34,32 @@ angular.module('Ticker', ['Util', 'Player', 'Monsters', 'Items'])
                         monsterDef = Monsters.data(['defs', monsterId]);
                         ammoId = monsterDef.ammo;
 
-                        if (!ammoId) {
-                            return;
-                        }
+                        if (ammoId) {
 
-                        if (!monsterDef.aps) {
-                            console.log('NOTICE missing monster def');
-                            return;
-                        }
+                            if (!monsterDef.aps) {
+                                console.log('NOTICE missing monster def');
+                                return;
+                            }
 
-                        ammoIfAllShoots = Math.floor(monsterDef.aps * monsterCnt);
-                        ammoMaxAvail = tick.availableAmmo.items[ammoId] -
-                            (tick.availableAmmo.items[ammoId] % monsterDef.aps);
-                        ammoUsed = Math.min(ammoIfAllShoots, ammoMaxAvail);
-                        shootingCnt = ammoUsed / monsterDef.aps;
-                        hittingCnt = monsterCnt - shootingCnt;
+                            ammoIfAllShoots = Math.floor(monsterDef.aps * monsterCnt);
+                            ammoMaxAvail = tick.availableAmmo.items[ammoId] -
+                                (tick.availableAmmo.items[ammoId] % monsterDef.aps);
+                            ammoUsed = Math.min(ammoIfAllShoots, ammoMaxAvail);
+
+                            shootingCnt = ammoUsed / monsterDef.aps;
+                            hittingCnt = monsterCnt - shootingCnt;
+
+                            tick.availableAmmo.items[ammoId] -= ammoUsed;
+                            tick.backpack.items[ammoId] -= ammoUsed;
+
+                        }
+                        else {
+
+                            ammoUsed = 0;
+                            shootingCnt = 0;
+                            hittingCnt = monsterCnt;
+
+                        }
 
                         tick.monsters[monsterId] = {
                             cnt: {
@@ -58,9 +69,6 @@ angular.module('Ticker', ['Util', 'Player', 'Monsters', 'Items'])
                             },
                             ammoUsed: ammoUsed
                         };
-
-                        tick.availableAmmo.items[ammoId] -= ammoUsed;
-                        tick.backpack.items[ammoId] -= ammoUsed;
 
                     }
 
@@ -98,6 +106,7 @@ angular.module('Ticker', ['Util', 'Player', 'Monsters', 'Items'])
                 angular.forEach(tick.monsters, function (data, monsterId) {
                     var monster = Monsters.data(['defs', monsterId]),
                         backpack = ItemsBackpack.getRandomBySample(monster.backpack, data.frags.total);
+                    console.log(backpack);
                     tick.monsters[monsterId].backpack = backpack;
                     tick.backpack.add(backpack);
                 });

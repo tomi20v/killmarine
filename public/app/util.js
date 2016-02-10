@@ -107,15 +107,9 @@ angular.module('Util', [])
                     topsAdd: function(index, value) {
                         value = value || 0;
                         var newVal = Util.deepAdd(this, index, value),
-                            //t = Util.deepAddMin(this.tops.top, index, value, newVal);
                             t = Util.deepSetMax(this.tops.top, index, newVal);
                         Util.deepAddMin(this.tops.total, index, value, t);
-                        //Util.deepSetMax(this.tops.total, index, t);
                         return newVal;
-                        //var newVal = Util.deepAdd(this, index, value),
-                        //    newTop = Util.deepAddMin(this.tops.top, index, value, newVal),
-                        //    newSum =
-                        //    ;
                     }
                 });
                 return this;
