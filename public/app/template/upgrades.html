@@ -25,7 +25,9 @@
           ng-repeat="upgradeId in ownedUpgrades()"
           disabled
           class="full btn btn-default list-group-item">
-    <span class="name">{{ upgrade(upgradeId).name }}</span>
+    <span class="name">{{ upgrade(upgradeId).name }}
+      <small>{{ upgrade(upgradeId).description }}</small>
+    </span>
     <span class="price">bought for {{ nextPrice(upgradeId) | BigPrint }}</span>
   </button>
 </div>

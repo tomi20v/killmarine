@@ -188,7 +188,7 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 ammo: 'rocket',
                 aps: 10,
-                available: true,
+                available: false,
                 tags: ['all', 'caco', 'episode1']
             },
             hell: {

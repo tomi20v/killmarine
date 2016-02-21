@@ -19,7 +19,7 @@ angular.module('Upgrades', [])
                 //    description: 'Enable shotgun in the marine shootout. Also doubles Sargeant frags',
                 //    price: 1e3,
                 //    requires: ['upgrades1'],
-                //    reqCallback: function (d) {
+                //    requireCallback: function (d) {
                 //        return (
                 //                d.Monsters.data('owned.sarge') || 0
                 //            ) > 25;
@@ -36,7 +36,7 @@ angular.module('Upgrades', [])
                     description: 'Increase shooting frags by 100%',
                     price: 1e9+1,
                     requires: ['upgrades1'],
-                    reqCallback: function (d) {
+                    requireCallback: function (d) {
                         // return sum of 'bullet' tagged monsters
                         return (d.Monsters.data('owned.zomb') || 0 +
                             d.Monsters.data('owned.sarg') || 0 +
@@ -54,7 +54,7 @@ angular.module('Upgrades', [])
                     description: 'Increase shooting frags by 1000%',
                     price: 10e18,
                     requires: ['upgrades1','rocket'],
-                    reqs: function (d) {
+                    requireCallback: function (d) {
                         return (d.Monsters.data('owned.imp') || 0) > 1000;
                     }
                 },
@@ -63,7 +63,7 @@ angular.module('Upgrades', [])
                     description: 'Increase click hits by 100%',
                     price: 1,
                     requires: ['upgrades1'],
-                    reqCallback: function (d) {
+                    requireCallback: function (d) {
                         return d.Meta.data('usefulClicks') > 10;
                     }
                 },
@@ -72,7 +72,7 @@ angular.module('Upgrades', [])
                     description: 'Increase FPS based on number of clicks in this game',
                     price: 1e9,
                     requires: ['clickAround'],
-                    reqCallback: function (d) {
+                    requireCallback: function (d) {
 
                     }
                 },
@@ -81,17 +81,22 @@ angular.module('Upgrades', [])
                     description: 'Each hit on the marine will count as 100 hits',
                     price: 1,
                     requires: ['upgrades1', 'clickMePlenty'],
-                    reqCallback: function (d) {
+                    requireCallback: function (d) {
                         // register usefulclicks / clicks for an hour and compare
                     }
                 },
-                bit16: {
-                    name: '16 bit game',
+                bitMonsters: {
+                    //name: '{{label}} bit monster count',
+                    name: '16 bit monster count',
                     description: 'Own more than 255 monsters',
                     price: 16536,
                     requires: ['upgrades1'],
-                    reqSecret: ['monsterOverflow8'],
-                    persists: true
+                    requireSecret: ['monsterOverflow'],
+                    persists: true,
+                    labels: [
+                        null,
+                        '16'
+                    ]
                 },
 
                 episode1: {

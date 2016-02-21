@@ -54,6 +54,9 @@
             <div ng-if="isActiveTab('upgrades')"
                  ng-controller="UpgradesController"
                  ng-include="'app/template/upgrades.html'"></div>
+            <div ng-if="isActiveTab('secrets')"
+                 ng-controller="SecretsController"
+                 ng-include="'app/template/secrets.html'"></div>
           </div>
         </div>
         <!-- RIGHT COLUMN -->
@@ -95,6 +98,8 @@
     <script src="app/player.js"></script>
     <script src="app/upgrades.def.js"></script>
     <script src="app/upgrades.js"></script>
+    <script src="app/secrets.def.js"></script>
+    <script src="app/secrets.js"></script>
     <script src="app/scoreboard.js"></script>
 
   </body>

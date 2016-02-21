@@ -136,6 +136,30 @@
     float: right; clear: none;
 }
 
+/** secrets */
+.buttons-panel {
+    padding-top: 1em;
+}
+.buttons-panel button {
+    padding: 12px 20px;
+}
+.buttons-panel button .name {
+    float: left;
+    font-weight: bold;
+}
+.buttons-panel button .description {
+    padding-left: 1em;
+    font-size: 70%;
+}
+.buttons-panel button .info {
+    float: right;
+    clear: none;
+}
+.buttons-panel button .name {
+}
+.buttons-panel button .name {
+}
+
 /** backpack */
 .backpack-container {
     display: block;

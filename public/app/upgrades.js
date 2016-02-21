@@ -52,7 +52,7 @@ angular.module('Upgrades')
     .service('UpgradesLogic', function(
         $rootScope, $timeout, UtilTime,
         UpgradesBuilder, UpgradesDef, UpgradesData, Upgrades,
-        Monsters, Player, Meta
+        Monsters, Player, Meta, Secrets
     ) {
 
         var service = {
@@ -85,7 +85,7 @@ angular.module('Upgrades')
 
                     if (othis.owned(key) || othis.available(key));
                     else if (!othis.ownedAll(value.requires));
-                    else if (!allSecrets(value.reqSecrets));
+                    else if (!allSecrets(value.requireSecret));
                     else if (angular.isFunction(value.reqCallback)) {
                         var d = {
                             Upgrades: Upgrades,
@@ -122,8 +122,16 @@ angular.module('Upgrades')
             }
         },
         allSecrets = function(secrets) {
-            // @todo implement with secrets
-            return true;
+            var hasAll = true;
+            if(secrets) {
+                angular.forEach(secrets, function(id) {
+                    var data = Secrets.data(['owned', id]);
+                    if (!data) {
+                        hasAll = false;
+                    }
+                });
+            }
+            return hasAll;
         },
         buy = function(upgradeId, succesCallback) {
 

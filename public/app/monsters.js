@@ -42,7 +42,7 @@ angular.module('Monsters')
 
     })
     .service('MonstersData', function(
-        UtilData, MonstersDef, MonstersBuilder, MonstersLoader
+        UtilData, MonstersBuilder, MonstersLoader
     ) {
 
         var data = MonstersBuilder({}),
@@ -144,6 +144,12 @@ angular.module('Monsters')
                     MonstersData.defs[id].available = true;
                 });
             },
+            onResetOwnedAll: function(event) {
+                angular.forEach(MonstersData.owned, function(cnt, id) {
+                    MonstersData.owned[id] = 0;
+                });
+                MonstersData.ownedAll = 0;
+            },
             onTick: function(event, tick) {
                 angular.forEach(tick.monsters, function(monster, monsterId) {
                     MonstersData.topsAdd(
@@ -159,9 +165,9 @@ angular.module('Monsters')
 
     })
     .run(function($rootScope, MonstersLogic) {
-        //$rootScope.$on('Monsters.registerMod', angular.bind(Monsters, Monsters.registerMod));
         $rootScope.$on('Game.restart', angular.bind(MonstersLogic, MonstersLogic.onGameRestart));
         $rootScope.$on('Monsters.available', angular.bind(MonstersLogic, MonstersLogic.onMonsterAvailable));
+        $rootScope.$on('Monsters.resetOwned', angular.bind(MonstersLogic, MonstersLogic.onResetOwnedAll));
         $rootScope.$on('Ticker.tick', angular.bind(MonstersLogic, MonstersLogic.onTick));
     })
     .controller('MonstersController', function(
@@ -197,6 +203,7 @@ angular.module('Monsters')
             }
         });
 
+        // @todo reuse the tabs builder
         angular.extend($scope, {
             buyAtOnce: 1,
             strategy: buyStrategy,

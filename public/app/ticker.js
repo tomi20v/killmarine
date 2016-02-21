@@ -106,7 +106,6 @@ angular.module('Ticker', ['Util', 'Player', 'Monsters', 'Items'])
                 angular.forEach(tick.monsters, function (data, monsterId) {
                     var monster = Monsters.data(['defs', monsterId]),
                         backpack = ItemsBackpack.getRandomBySample(monster.backpack, data.frags.total);
-                    console.log(backpack);
                     tick.monsters[monsterId].backpack = backpack;
                     tick.backpack.add(backpack);
                 });

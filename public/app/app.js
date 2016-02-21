@@ -6,6 +6,7 @@ var app = angular.module('App', [
     'Marine',
     'Player',
     'Upgrades',
+    'Secrets',
     'Monsters',
     'CheatBar',
     'Saver',
@@ -34,7 +35,7 @@ app
 
         angular.extend($scope, UtilBoot.activeTabMixin(), {
             activeTab: 'scoreboard',
-            //activeTab: 'upgrades',
+            activeTab: 'upgrades',
             fps: 0,
             ticks: 0,
             getFrags: function() {

@@ -69,7 +69,6 @@ angular.module('Meta', ['Util'])
                     usefulClicks: 0,
                     gameStamp: new Date().getTime()
                 });
-                console.log(MetaData);
             }
         }
 
