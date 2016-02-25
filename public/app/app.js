@@ -5,6 +5,7 @@ var app = angular.module('App', [
     'Util',
     'Marine',
     'Player',
+    'Frags',
     'Upgrades',
     'Secrets',
     'Monsters',
@@ -31,23 +32,30 @@ app
             return $delegate;
         });
     }])
-    .controller('AppController', function($scope, $rootScope, UtilBoot, UtilConfig, Player) {
+    .controller('AppController', [
+        '$scope',
+        '$rootScope',
+        'UtilBoot',
+        'Frags',
+        function($scope, $rootScope, UtilBoot, Frags) {
 
-        angular.extend($scope, UtilBoot.activeTabMixin(), {
-            activeTab: 'scoreboard',
-            activeTab: 'upgrades',
-            fps: 0,
-            ticks: 0,
-            getFrags: function() {
-                return Player.data('frags');
-            }
-        });
-
-        $rootScope.$on('Ticker.tick', function(event, tick) {
-            angular.extend($scope, {
-                fps: Math.round(tick.fps),
-                ticks: tick.tick.seq
+            angular.extend($scope, UtilBoot.activeTabMixin(), {
+                activeTab: 'scoreboard',
+                activeTab: 'upgrades',
+                fps: 0,
+                ticks: 0,
+                getFrags: function() {
+                    return Frags.data('owned.frag');
+                }
             });
-        })
 
-    });
+            $rootScope.$on('Ticker.tick', function(event, tick) {
+                angular.extend($scope, {
+                    fps: Math.round(tick.fps),
+                    ticks: tick.tick.seq
+                });
+            })
+
+        }
+    ])
+;

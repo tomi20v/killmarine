@@ -9,14 +9,23 @@ angular.module('Meta', ['Util'])
         var data = {
             clicks: 0,
             usefulClicks: 0,
+            gameTime: 0,
             playTime: 0,
+            sessionTime: 0,
             fps: 0,
             gameStamp: null,
             sessionStamp: null,
             firstStamp: null
         };
 
-        UtilData.buildDataTop(data, ['clicks', 'usefulClicks', 'playTime', 'fps']);
+        UtilData.buildDataTop(data, [
+            'clicks',
+            'usefulClicks',
+            'gameTime',
+            'playTime',
+            'sessionTime',
+            'fps'
+        ]);
 
         MetaLoader(data);
 
@@ -34,6 +43,9 @@ angular.module('Meta', ['Util'])
             Saver.register(saveKey, data);
 
             angular.merge(data, {
+                gameTime: 0,
+                playTime: 0,
+                sessionTime: 0,
                 sessionStamp: stamp,
                 gameStamp: stamp,
                 firstStamp: stamp
@@ -57,12 +69,15 @@ angular.module('Meta', ['Util'])
                 //}
             },
             onTick: function(event, tick) {
+                MetaData.topsAdd('gameTime', 1);
                 MetaData.topsAdd('playTime', 1);
+                MetaData.topsAdd('sessionTime', 1);
                 MetaData.fps = tick.fps;
                 Util.deepSetMax(MetaData, 'tops.top.fps', tick.fps);
             },
             onGameRestart: function() {
                 angular.merge(MetaData, {
+                    gameTime: 0,
                     playTime: 0,
                     fps: 0,
                     clicks: 0,

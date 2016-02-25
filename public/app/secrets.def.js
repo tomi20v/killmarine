@@ -20,7 +20,6 @@ angular.module('Secrets', ['Util','Saver','Player'])
                 require: {
                     events: 'Monsters.*',
                     callback: function(d) {
-                        console.log(d.Monsters.data('ownedAll') > 255 ? 'I' : 'N');
                         return d.Monsters.data('ownedAll') > 255;
                     }
                 },

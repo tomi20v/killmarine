@@ -42,27 +42,12 @@ angular.module('Util', [])
             //    });
             //
             //}
+
         }
     })
     .service('UtilData', function(Util) {
-
+        // @todo all these shall become obsolete once all modules migrated to behaves
         return {
-            copyWhitelistedProps: function (data, whitelist) {
-                var cpy;
-                if (angular.isArray(whitelist)) {
-                    cpy = {};
-                    angular.forEach(whitelist, function(key) {
-                        var value = data[key];
-                        cpy[key] = angular.isObject(value)
-                            ? angular.extend({}, data[key])
-                            : value;
-                    });
-                }
-                else {
-                    cpy = angular.copy(data);
-                }
-                return cpy;
-            },
             buildDataGetterService: function(data) {
                 return {
                     data: function(index) {
@@ -71,7 +56,7 @@ angular.module('Util', [])
                 }
             },
             buildDataTopSum: function(data, whitelist) {
-                var cpy = this.copyWhitelistedProps(data, whitelist);
+                var cpy = Util.copyProps(data, whitelist);
                 angular.extend(data, {
                     tops: {
                         top: angular.copy(cpy),
@@ -93,10 +78,10 @@ angular.module('Util', [])
                             newTotalSum = Util.deepAddMin(this.tops.total, index, value, 0);
                     }
                 });
-                return this;
+                return data;
             },
             buildDataTop: function(data, whitelist) {
-                var cpy = this.copyWhitelistedProps(data, whitelist);
+                var cpy = Util.copyProps(data, whitelist);
                 angular.extend(data, {
                     tops: {
                         top: angular.copy(cpy),
@@ -112,7 +97,7 @@ angular.module('Util', [])
                         return newVal;
                     }
                 });
-                return this;
+                return data;
             }
         }
 
@@ -160,12 +145,14 @@ angular.module('Util', [])
         }
 
     })
-    .service('UtilTime', function() {
-
-        var playTime = 0;
+    .service('UtilTime', function(Meta) {
 
         return {
             formatTime: function(sec) {
+
+                if (!sec) {
+                    return '';
+                }
 
                 var parts = [], p, p0 = '';
 
@@ -187,17 +174,20 @@ angular.module('Util', [])
 
                 return p0 + parts.join(':');
 
-            },
-            playTime: function(){
-                return playTime;
-            },
-            onTick: function(event, tick) {
-                playTime = tick.tick.seq;
             }
         }
 
     })
     .service('Util', function() {
+
+        function wrapFn(fn, newFn, obj) {
+            return fn ? function() {
+                    var ret = fn.apply(obj, arguments);
+                    arguments[0] = ret;
+                    return newFn.apply(obj, arguments);
+                }
+                : newFn;
+        }
 
         return {
             lookUp: function(data, path) {
@@ -268,8 +258,105 @@ angular.module('Util', [])
                     })
                 });
                 return ids;
+            },
+            copyProps: function (data, whitelist) {
+                var cpy;
+                if (angular.isArray(whitelist)) {
+                    cpy = {};
+                    angular.forEach(whitelist, function(key) {
+                        var value = data[key];
+                        cpy[key] = angular.isObject(value)
+                            ? angular.extend({}, data[key])
+                            : value;
+                    });
+                }
+                else {
+                    cpy = angular.copy(data);
+                }
+                return cpy;
+            },
+            extendWithWrap: function(obj, ext) {
+
+                angular.forEach(ext, function(val, key) {
+                    if (!obj.hasOwnProperty(key)) {
+                        obj[key] = angular.copy(val);
+                    }
+                    else if (angular.isFunction(val)) {
+                        obj[key] = wrapFn(obj[key], val, obj);
+                    }
+                    else {
+                        angular.extend(obj[key], val);
+                    }
+                });
+
+                return obj;
+
             }
         }
+
+    })
+    .service('UtilRequires', function($injector) {
+
+        function maxByMatch(def, Service) {
+            var matches = def.match(/^(.+)\.([0-9]+)?$/),
+                index, cnt, data;
+            index = matches[1];
+            cnt = matches[2];
+            data = Service.data(index);
+            return cnt
+                ? (data >= cnt ? 0 : null)
+                : data;
+        }
+        function maxByService(defs, serviceName) {
+            var max = null,
+                Service = $injector.get(serviceName);
+            angular.forEach(defs, function(def) {
+                var localMax = maxByMatch(def, Service);
+                max = max === null
+                    ? localMax
+                    : Math.min(max, localMax);
+            });
+            return max;
+        }
+        function maxByCallback(defs, serviceName) {
+            console.log('@TODO utilRequire.maxByCallback');
+            return null;
+        }
+        function maxOfTwo(max1, max2) {
+
+            var max;
+
+            if (max1 === null || max2 === null) {
+                max = null;
+            }
+            else if (max1 === 0 || max2 === 0) {
+                max = max1 + max2;
+            }
+            else {
+                max = Math.min(max1, max2);
+            }
+
+            return max;
+
+        }
+
+        return {
+            maxAvailable: function(requires, cap) {
+                var maxAvailable = 0;
+                if (requires) {
+                    maxAvailable = 0;
+                    angular.forEach(requires, function (defs, serviceName) {
+                        var maxByRequire = serviceName == 'callback'
+                            ? maxByCallback(defs, serviceName)
+                            : maxByService(defs, serviceName);
+                        maxAvailable = maxOfTwo(maxAvailable, maxByRequire);
+                    });
+                }
+
+                return maxOfTwo(maxAvailable, cap);
+
+            }
+        };
 
     })
     .service('UtilConfig', function() {

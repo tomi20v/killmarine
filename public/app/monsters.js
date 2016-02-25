@@ -73,97 +73,111 @@ angular.module('Monsters')
         }
 
     })
-    .service('MonstersLogic', function(
-        $rootScope, Util, UtilData, UtilMath, MonstersDef, MonstersBuilder, MonstersData, Player
-    ) {
+    .service('MonstersLogic', [
+        '$rootScope',
+        'Util',
+        'UtilData',
+        'UtilMath',
+        'Frags',
+        'MonstersDef',
+        'MonstersBuilder',
+        'MonstersData',
+        function(
+            $rootScope,
+            Util, UtilData, UtilMath, Frags,
+            MonstersDef, MonstersBuilder, MonstersData
+        ) {
 
-        var buy = function(monsterId, cnt, price) {
+            var buy = function(monsterId, cnt, price) {
 
-            var newOwned = MonstersData.topsAdd(['owned', monsterId], cnt);
-                newTotal = MonstersData.topsAdd(['ownedAll'], cnt);
+                var newOwned = MonstersData.topsAdd(['owned', monsterId], cnt);
+                    newTotal = MonstersData.topsAdd(['ownedAll'], cnt);
 
-            $rootScope.$emit('Monsters.bought', {
-                id: monsterId,
-                cnt: cnt,
-                allCnt: newTotal,
-                frags: price
-            });
-        };
+                $rootScope.$emit('Monsters.bought', {
+                    id: monsterId,
+                    cnt: cnt,
+                    allCnt: newTotal,
+                    frags: price
+                });
+            };
 
-        return {
-            available: function(monsterId) {
-                return MonstersData.defs[monsterId].available;
-            },
-            nextPrice: function(monsterId, cnt) {
-                var owned = MonstersData.owned[monsterId],
-                    buyable = (MonstersData.defs[monsterId].buyable || function(){ return {}; }) (),
-                    price = buyable.price,
-                    q = buyable.q,
-                    priceWithNextCnt = UtilMath.sumGeoSeq(price, q, owned + cnt)
-                    priceOfowned = UtilMath.sumGeoSeq(price, q, owned);
-                return Math.floor(priceWithNextCnt - priceOfowned);
-            },
-            maxPrice: function(monsterId) {
-                var cnt = this.maxBuyable(monsterId);
-                return this.nextPrice(monsterId, cnt);
-            },
-            maxBuyable: function(monsterId) {
-                var owned = MonstersData.owned[monsterId],
-                    price = MonstersData.defs[monsterId].buyable().price,
-                    q = MonstersData.defs[monsterId].buyable().q,
-                    ownedPrice = UtilMath.sumGeoSeq(price, q, owned);
-                return UtilMath.seqNBySum(ownedPrice + Player.data('frags'), price, q) - owned;
-            },
-            buy: function(monsterId, cnt, successCallback) {
+            return {
+                available: function(monsterId) {
+                    return MonstersData.defs[monsterId].available;
+                },
+                nextPrice: function(monsterId, cnt) {
+                    var owned = MonstersData.owned[monsterId],
+                        buyable = (MonstersData.defs[monsterId].buyable || function(){ return {}; }) (),
+                        price = buyable.price,
+                        q = buyable.q,
+                        priceWithNextCnt = UtilMath.sumGeoSeq(price, q, owned + cnt),
+                        priceOfowned = UtilMath.sumGeoSeq(price, q, owned);
+                    return Math.floor(priceWithNextCnt - priceOfowned);
+                },
+                maxPrice: function(monsterId) {
+                    var cnt = this.maxBuyable(monsterId);
+                    return this.nextPrice(monsterId, cnt);
+                },
+                maxBuyable: function(monsterId) {
+                    var owned = MonstersData.owned[monsterId],
+                        price = MonstersData.defs[monsterId].buyable().price,
+                        q = MonstersData.defs[monsterId].buyable().q,
+                        ownedPrice = UtilMath.sumGeoSeq(price, q, owned);
+                    return UtilMath.seqNBySum(ownedPrice + Frags.data('owned.frags'), price, q) - owned;
+                    //return UtilMath.seqNBySum(ownedPrice + Player.data('frags'), price, q) - owned;
+                },
+                buy: function(monsterId, cnt, successCallback) {
 
-                var nextPrice;
+                    var nextPrice;
 
-                if (!this.available(monsterId)) {
-                    return false;
-                }
-
-                nextPrice = this.nextPrice(monsterId, cnt);
-
-                $rootScope.$emit('Player.spend', {
-                    frags: nextPrice,
-                    success: function() {
-                        buy(monsterId, cnt, nextPrice);
-                        if (successCallback) {
-                            successCallback();
-                        }
+                    if (!this.available(monsterId)) {
+                        return false;
                     }
-                });
 
-            },
-            onGameRestart: function() {
-                MonstersBuilder(MonstersData);
-            },
-            onMonsterAvailable: function(event, eventData) {
-                var ids = Util.idsByTags(MonstersData.defs, eventData.tags);
-                angular.forEach(ids, function(id) {
-                    MonstersData.defs[id].available = true;
-                });
-            },
-            onResetOwnedAll: function(event) {
-                angular.forEach(MonstersData.owned, function(cnt, id) {
-                    MonstersData.owned[id] = 0;
-                });
-                MonstersData.ownedAll = 0;
-            },
-            onTick: function(event, tick) {
-                angular.forEach(tick.monsters, function(monster, monsterId) {
-                    MonstersData.topsAdd(
-                        ['frags', 'byMonsters', monsterId],
-                        monster.frags.total
-                    );
-                });
-                MonstersData.topsAdd('frags.hit', tick.frags.hit);
-                MonstersData.topsAdd('frags.shoot', tick.frags.shoot);
-                MonstersData.topsAdd('frags.byMonstersAll', tick.frags.hit + tick.frags.shoot);
-            }
-        };
+                    nextPrice = this.nextPrice(monsterId, cnt);
 
-    })
+                    //$rootScope.$emit('Player.spend', {
+                    $rootScope.$emit('Frags.spend', {
+                        frags: nextPrice,
+                        success: function() {
+                            buy(monsterId, cnt, nextPrice);
+                            if (successCallback) {
+                                successCallback();
+                            }
+                        }
+                    });
+
+                },
+                onGameRestart: function() {
+                    MonstersBuilder(MonstersData);
+                },
+                onMonsterAvailable: function(event, eventData) {
+                    var ids = Util.idsByTags(MonstersData.defs, eventData.tags);
+                    angular.forEach(ids, function(id) {
+                        MonstersData.defs[id].available = true;
+                    });
+                },
+                onResetOwnedAll: function(event) {
+                    angular.forEach(MonstersData.owned, function(cnt, id) {
+                        MonstersData.owned[id] = 0;
+                    });
+                    MonstersData.ownedAll = 0;
+                },
+                onTick: function(event, tick) {
+                    angular.forEach(tick.monsters, function(monster, monsterId) {
+                        MonstersData.topsAdd(
+                            ['frags', 'byMonsters', monsterId],
+                            monster.frags.total
+                        );
+                    });
+                    MonstersData.topsAdd('frags.hit', tick.frags.hit);
+                    MonstersData.topsAdd('frags.shoot', tick.frags.shoot);
+                    MonstersData.topsAdd('frags.byMonstersAll', tick.frags.hit + tick.frags.shoot);
+                }
+            };
+
+        }
+    ])
     .run(function($rootScope, MonstersLogic) {
         $rootScope.$on('Game.restart', angular.bind(MonstersLogic, MonstersLogic.onGameRestart));
         $rootScope.$on('Monsters.available', angular.bind(MonstersLogic, MonstersLogic.onMonsterAvailable));
@@ -172,7 +186,7 @@ angular.module('Monsters')
     })
     .controller('MonstersController', function(
         $scope, $rootScope,
-        MonstersData, MonstersLogic, PlayerData
+        MonstersData, MonstersLogic, Frags
     ) {
 
         var buyStrategy = {
@@ -185,7 +199,7 @@ angular.module('Monsters')
             },
             canBuyNext: function(monsterId, cnt) {
                 var nextPrice = this.nextPrice(monsterId, cnt);
-                return nextPrice && (nextPrice <= PlayerData.frags);
+                return nextPrice && (nextPrice <= Frags.data('owned.frags'));
             },
             buy: function(monsterId, cnt, callback) {
                 return MonstersLogic.buy(monsterId, cnt, callback);

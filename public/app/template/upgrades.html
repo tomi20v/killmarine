@@ -4,30 +4,32 @@
       <button ng-click="setActiveTab('available')"
               class="btn btn-primary">available</button>
       <button ng-click="setActiveTab('owned')"
-              class="btn btn-primary">owned ({{ ownedCnt() }})</button>
+              class="btn btn-primary">owned ({{ items.owned().length }})</button>
     </div>
     <button ng-if="isActiveTab('available')"
-            ng-disabled="!canBuyAll()"
-            ng-click="buyAll()"
-            class="btn btn-default pull-right">buy all for {{ allPrice() | BigPrint}}</button>
+            ng-disabled="!buyable.canBuyAll()"
+            ng-click="buyable.buyAll()"
+            class="btn btn-default pull-right">buy all for {{ buyable.priceOfAll() | BigPrint}}</button>
   </span>
-  <button ng-if="isActiveTab('available')"
-          ng-repeat="upgradeId in availableUpgrades()"
-          ng-disabled="!canBuy(upgradeId)"
-          ng-click="buy(upgradeId)"
-          class="full btn btn-default list-group-item">
-    <span class="name">{{ upgrade(upgradeId).name }}
-      <small ng-if="canBuy(upgradeId)">{{ upgrade(upgradeId).description }}</small>
-    </span>
-    <span class="price">buy for {{ nextPrice(upgradeId) | BigPrint}}</span>
-  </button>
-  <button ng-if="isActiveTab('owned')"
-          ng-repeat="upgradeId in ownedUpgrades()"
-          disabled
-          class="full btn btn-default list-group-item">
-    <span class="name">{{ upgrade(upgradeId).name }}
-      <small>{{ upgrade(upgradeId).description }}</small>
-    </span>
-    <span class="price">bought for {{ nextPrice(upgradeId) | BigPrint }}</span>
-  </button>
+  <span ng-if="isActiveTab('available')">
+    <button ng-repeat="upgradeId in items.available()"
+            ng-disabled="!buyable.canBuy(upgradeId, 1)"
+            ng-click="buyable.buy(upgradeId, 1)"
+            class="full btn btn-default list-group-item">
+      <span class="name">{{ items.name(upgradeId, 1) }}
+        <small ng-if="buyable.canBuy(upgradeId, 1)">{{ items.description(upgradeId) }}</small>
+      </span>
+      <span class="price">buy for {{ buyable.priceOfNext(upgradeId, 1) | BigPrint}}</span>
+    </button>
+  </span>
+  <span ng-if="isActiveTab('owned')">
+    <button ng-repeat="upgradeId in items.owned()"
+            disabled
+            class="full btn btn-default list-group-item">
+      <span class="name">{{ items.name(upgradeId, 0) }}
+        <small>{{ items.description(upgradeId) }}</small>
+      </span>
+      <span class="price">bought at {{ buyable.lastBuy(upgradeId) | TimePrint }}</span>
+    </button>
+  </span>
 </div>
