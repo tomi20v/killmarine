@@ -26,17 +26,17 @@
 
         <div class="col-mid mid-tabs col-md-6">
           <ul class="mid-tabs-nav nav nav-tabs nav-justified">
-            <li role="presentation" ng-class="{active: isActiveTab('motd')}">
-              <a href="#" ng-click="setActiveTab('motd')">Motd</a>
+            <li role="presentation" ng-class="{active: hasTabs.isActiveTab('motd')}">
+              <a href="#" ng-click="hasTabs.setActiveTab('motd')">Motd</a>
             </li>
-            <li role="presentation" ng-class="{active: isActiveTab('scoreboard')}">
-              <a href="#" ng-click="setActiveTab('scoreboard')">Scoreboard</a>
+            <li role="presentation" ng-class="{active: hasTabs.isActiveTab('scoreboard')}">
+              <a href="#" ng-click="hasTabs.setActiveTab('scoreboard')">Scoreboard</a>
             </li>
-            <li role="presentation" ng-class="{active: isActiveTab('upgrades')}">
-              <a href="#" ng-click="setActiveTab('upgrades')">Upgrades</a>
+            <li role="presentation" ng-class="{active: hasTabs.isActiveTab('upgrades')}">
+              <a href="#" ng-click="hasTabs.setActiveTab('upgrades')">Upgrades</a>
             </li>
-            <li role="presentation" ng-class="{active: isActiveTab('secrets')}">
-              <a href="#" ng-click="setActiveTab('secrets')">Secrets</a>
+            <li role="presentation" ng-class="{active: hasTabs.isActiveTab('secrets')}">
+              <a href="#" ng-click="hasTabs.setActiveTab('secrets')">Secrets</a>
             </li>
 <!--
             <li role="presentation" ng-class="{active: isActiveTab('servers')}">
@@ -45,16 +45,16 @@
 -->
           </ul>
           <div id="mid-tabs-tabs">
-            <div ng-if="isActiveTab('motd')">
+            <div ng-if="hasTabs.isActiveTab('motd')">
               <div btf-markdown ng-include="'../README.md'"></div>
             </div>
-            <div ng-if="isActiveTab('scoreboard')"
+            <div ng-if="hasTabs.isActiveTab('scoreboard')"
                  ng-controller="ScoreboardController"
                  ng-include="'app/template/scoreboard.html'"></div>
-            <div ng-if="isActiveTab('upgrades')"
+            <div ng-if="hasTabs.isActiveTab('upgrades')"
                  ng-controller="UpgradesController"
                  ng-include="'app/template/upgrades.html'"></div>
-            <div ng-if="isActiveTab('secrets')"
+            <div ng-if="hasTabs.isActiveTab('secrets')"
                  ng-controller="SecretsController"
                  ng-include="'app/template/secrets.html'"></div>
           </div>
@@ -78,7 +78,7 @@
       </div>
     </div>
 
-    <script src="bower_components/angular/angular.min.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angular-local-storage/dist/angular-local-storage.min.js"></script>
     <script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
     <script src="bower_components/angular-markdown-directive/markdown.js"></script>
@@ -93,6 +93,7 @@
     <script src="app/behaves/persisted.js"></script>
     <script src="app/behaves/spendable.js"></script>
     <script src="app/behaves/tops.js"></script>
+    <script src="app/behaves/hasTabs.js"></script>
     <script src="app/app.js"></script>
     <script src="app/util.js"></script>
     <script src="app/bignum.js"></script>

@@ -1,7 +1,5 @@
 angular.module('Upgrades', ['Behaves', 'Frags'])
-    .service('UpgradesDef', function() {
-
-        return {
+    .constant('UpgradesDef', {
             // has to be contained in the defs
             module: 'Upgrades',
             behaves: {
@@ -195,6 +193,5 @@ angular.module('Upgrades', ['Behaves', 'Frags'])
                 //}
             }
         }
-
-    })
+    )
 ;

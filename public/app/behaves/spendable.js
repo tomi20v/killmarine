@@ -55,6 +55,21 @@ angular.module('BehavesSpendable', [])
 
         }
     ])
+    .service('BehavesSpendableRun', [
+        '$injector',
+        '$rootScope',
+        function($injector, $rootScope) {
+
+            return function(def) {
+
+                var LogicService = $injector.get(def.module + 'Logic');
+
+                $rootScope.$on(def.module + '.spend', angular.bind(LogicService, LogicService.onSpend));
+
+            }
+
+        }
+    ])
     .service('BehavesSpendableHelper', [
         function() {
 

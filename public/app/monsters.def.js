@@ -1,36 +1,49 @@
 angular.module('Monsters', ['Util','Saver','Player'])
     .constant('MonstersDef', {
-        monsterProto: {
-            name: '',
-            id: '',
-            buyable: {
-                price: 0,
-                q: 0
-            },
-            fps: {
-                hit: 0,
-                shoot: 0
-            },
-            backpack: {
-                level: 1,
-                items: {
-                    clip: 0,
-                    shell: 0,
-                    rocket: 0,
-                    cell: 0
+        module: 'Monsters',
+        behaves: {
+            Item: {
+                proto: {
+                    price: {
+                        base: 0,
+                        q: 0
+                    },
+                    fps: {
+                        hit: 0,
+                        shoot: 0
+                    },
+                    backpack: {
+                        level: 1,
+                        items: {
+                            clip: 0,
+                            shell: 0,
+                            rocket: 0,
+                            cell: 0
+                        }
+                    },
+                    ammo: null,
+                    aps: 0
                 }
             },
-            ammo: null,
-            aps: 0,
-            available: false,
-            tags: []
+            Ownable: true,
+            Available: true,
+            Buyable: {
+                resource: {
+                    module: 'Frags',
+                    id: 'frag'
+                }
+            },
+            Tops: {
+                sum: true
+            },
+            Persisted: true
         },
-        monsters: {
+        defs: {
             zomb: {
                 name: 'Zombieman',
                 id: 'zomb',
-                buyable: {
-                    price: 5,
+                price: {
+                    base: 5,
                     q: 1.03
                 },
                 fps: {
@@ -45,15 +58,13 @@ angular.module('Monsters', ['Util','Saver','Player'])
                     }
                 },
                 ammo: 'clip',
-                aps: 1,
-                available: true,
-                tags: ['all', 'zomb']
+                aps: 1
             },
             sarg: {
                 name: 'Sargeant',
                 id: 'sarg',
-                buyable: {
-                    price: 20,
+                price: {
+                    base: 20,
                     q: 1.04
                 },
                 fps: {
@@ -69,14 +80,15 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 ammo: 'shell',
                 aps: 2,
-                available: true,
-                tags: ['all', 'sarg']
+                requires: {
+                    Upgrades: ['owned.upgrades.1']
+                }
             },
             cmmd: {
                 name: 'Commando',
                 id: 'cmmd',
-                buyable: {
-                    price: 2400,
+                price: {
+                    base: 2400,
                     q: 1.06
                 },
                 fps: {
@@ -93,15 +105,16 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 ammo: 'clip',
                 aps: 3,
-                available: false,
-                tags: ['all', 'cmmd']
+                requires: {
+                    Upgrades: ['owned.upgrades.3']
+                }
             },
 
             imp: {
                 name: 'Imp',
                 id: 'imp',
-                buyable: {
-                    price: 90,
+                price: {
+                    base: 90,
                     q: 1.08
                 },
                 fps: {
@@ -118,14 +131,15 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 ammo: 'rocket',
                 aps: 1,
-                available: true,
-                tags: ['all', 'imp']
+                requires: {
+                    Upgrades: ['owned.upgrades.1']
+                }
             },
             manc: {
                 name: 'Mancubus',
                 id: 'manc',
-                buyable: {
-                    price: 600,
+                price: {
+                    base: 600,
                     q: 1
                 },
                 fps: {
@@ -141,14 +155,15 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 ammo: 'rocket',
                 aps: 5,
-                available: false,
-                tags: ['all', 'manc']
+                requires: {
+                    Upgrades: ['owned.upgrades.2']
+                }
             },
             rev: {
                 name: 'Revenant',
                 id: 'rev',
-                buyable: {
-                    price: 300,
+                price: {
+                    base: 300,
                     q: 1
                 },
                 fps: {
@@ -164,15 +179,16 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 ammo: 'rocket',
                 aps: 10,
-                available: false,
-                tags: ['all', 'rev']
+                requires: {
+                    Upgrades: ['owned.upgrades.3']
+                }
             },
 
             caco: {
                 name: 'Cacodemon',
                 id: 'caco',
-                buyable: {
-                    price: 400,
+                price: {
+                    base: 400,
                     q: 1.26
                 },
                 fps: {
@@ -188,14 +204,15 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 ammo: 'rocket',
                 aps: 10,
-                available: false,
-                tags: ['all', 'caco', 'episode1']
+                requires: {
+                    Upgrades: ['owned.upgrades.2']
+                }
             },
             hell: {
                 name: 'Hell Knight',
                 id: 'hell',
-                buyable: {
-                    price: 500,
+                price: {
+                    base: 500,
                     q: 1
                 },
                 fps: {
@@ -211,14 +228,15 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 ammo: 'rocket',
                 aps: 1,
-                available: false,
-                tags: ['all', 'hell', 'episode2']
+                requires: {
+                    Upgrades: ['owned.upgrades.3']
+                }
             },
             baro: {
                 name: 'Baron of hell',
                 id: 'baro',
-                buyable: {
-                    price: 1000,
+                price: {
+                    base: 1000,
                     q: 1
                 },
                 fps: {
@@ -234,15 +252,16 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 ammo: 'rocket',
                 aps: 10,
-                available: false,
-                tags: ['all', 'baro', 'episode3']
+                requires: {
+                    Upgrades: ['owned.upgrades.4']
+                }
             },
 
             demn: {
                 name: 'Demon',
                 id: 'demn',
-                buyable: {
-                    price: 5000,
+                price: {
+                    base: 5000,
                     q: 1
                 },
                 fps: {
@@ -263,14 +282,15 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 ammo: null,
                 aps: null,
-                available: false,
-                tags: ['all', 'demn', 'episode1']
+                requires: {
+                    Upgrades: ['owned.upgrades.1']
+                }
             },
             lost: {
                 name: 'Lost Soul',
                 id: 'lost',
-                buyable: {
-                    price: 100,
+                price: {
+                    base: 100,
                     q: 1
                 },
                 fps: {
@@ -286,14 +306,15 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 ammo: null,
                 aps: null,
-                available: false,
-                tags: ['all', 'lost', 'episode2']
+                requires: {
+                    Upgrades: ['owned.upgrades.3']
+                }
             },
             arch: {
                 name: 'Arch-Vile',
                 id: 'arch',
-                buyable: {
-                    price: 700,
+                price: {
+                    base: 700,
                     q: 1
                 },
                 fps: {
@@ -309,15 +330,16 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 ammo: null,
                 aps: null,
-                available: false,
-                tags: ['all', 'arch', 'episode3']
+                requires: {
+                    Upgrades: ['owned.upgrades.5']
+                }
             },
 
             spdm: {
                 name: 'Spiderdemon',
                 id: 'spdm',
-                buyable: {
-                    price: 3000,
+                price: {
+                    base: 3000,
                     q: 1
                 },
                 fps: {
@@ -333,14 +355,15 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 ammo: 'plasma',
                 aps: 40,
-                available: false,
-                tags: ['all', 'spdm', 'episode1']
+                requires: {
+                    Upgrades: ['owned.upgrades.4']
+                }
             },
             artr: {
                 name: 'Arachnotron',
                 id: 'artr',
-                buyable: {
-                    price: 500,
+                price: {
+                    base: 500,
                     q: 1
                 },
                 fps: {
@@ -356,14 +379,15 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 ammo: 'plasma',
                 aps: 1,
-                available: false,
-                tags: ['all', 'artr', 'episode2']
+                requires: {
+                    Upgrades: ['owned.upgrades.5']
+                }
             },
             cybd: {
                 name: 'Cyberdemon',
                 id: 'cybd',
-                buyable: {
-                    price: 4000,
+                price: {
+                    base: 4000,
                     q: 1
                 },
                 fps: {
@@ -379,15 +403,16 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 ammo: 'plasma',
                 aps: 666,
-                available: false,
-                tags: ['all', 'cybd', 'episode3']
+                requires: {
+                    Upgrades: ['owned.upgrades.6']
+                }
             },
 
             icon: {
                 name: 'Icon of Sin',
                 id: 'icon',
-                buyable: {
-                    price: 10000,
+                price: {
+                    base: 10000,
                     id: 1
                 },
                 fps: {
@@ -403,12 +428,10 @@ angular.module('Monsters', ['Util','Saver','Player'])
                 },
                 ammo: null,
                 aps: null,
-                available: false,
-                tags: ['all', 'icon', 'episode4']
+                requires: {
+                    Upgrades: ['owned.upgrades.7']
+                }
             }
-        },
-        available: {
-            always: ['zomb', 'sarg', 'imp']
         }
     })
 ;

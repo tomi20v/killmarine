@@ -1,11 +1,11 @@
 angular.module('CheatBar', ['Saver', 'Util', 'Ticker', 'Player'])
     .controller('CheatBarController', function(
-        $scope, $rootScope, Saver, UtilConfig, Ticker, PlayerData
+        $scope, $rootScope, Saver, UtilConfig, Ticker, FragsData
     ) {
 
         angular.extend($scope, {
             cheat: function() {
-                PlayerData.frags *= 123;
+                FragsData.owned.frag *= 123;
             },
             tick: function() {
                 Ticker();

@@ -15,7 +15,7 @@ angular.module('BehavesAvailable', [])
 
                         data = oldBuildFn(data);
 
-                        angular.extend(data, BehavesAvailableProto);
+                        angular.merge(data, BehavesAvailableProto);
 
                         data.saveFields = data.saveFields || [];
 
@@ -38,7 +38,7 @@ angular.module('BehavesAvailable', [])
         'UtilRequires',
         function($injector, Util, UtilRequires) {
 
-            return function(obj, def, x2) {
+            return function(obj, def) {
 
                 var DataService = $injector.get(def.module + 'Data'),
                     applyMaxAvailable = function(id, maxAvailable) {
@@ -97,6 +97,30 @@ angular.module('BehavesAvailable', [])
                             return false;
                         }
                         return true;
+                    }
+                })
+
+            }
+
+        }
+    ])
+    .service('BehavesAvailableController', [
+        '$injector',
+        function($injector) {
+
+            return function(obj, def) {
+
+                var DataService = $injector.get(def.module + 'Data'),
+                    LogicService = $injector.get(def.module + 'Logic');
+
+                return angular.extend(obj, {
+                    available: {
+                        ids: function() {
+                            return Object.keys(DataService.available);
+                        },
+                        cntAvailable: function(id) {
+                            return LogicService.available(id);
+                        }
                     }
                 })
 

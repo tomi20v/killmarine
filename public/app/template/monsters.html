@@ -1,23 +1,22 @@
 <div class="btn-group-vertical monsters-container" role="group">
-  <button ng-repeat="monster in getAvailableMonsters()"
-          ng-if="monster.available"
-          ng-disabled="!canBuyNext(monster.id)"
-          ng-click="buy(monster.id)"
+  <button ng-repeat="monsterId in available.ids()"
+          ng-disabled="!buyable.canBuyNext(monsterId)"
+          ng-click="buyable.buy(monsterId)"
           type="button"
           class="full btn btn-primary">
-    <span class="name pull-left">{{ monster.name }}</span>
-    <span class="owned badge pull-right">{{ getOwned(monster.id) }}</span>
-    <span class="pull-right shooting-container" ng-if="monster.ammo && getOwned(monster.id)">
+    <span class="name pull-left">{{ item.name(monsterId) }}</span>
+    <span class="owned badge pull-right">{{ ownable.cnt(monsterId) }}</span>
+    <span class="pull-right shooting-container" ng-if="item.data(monsterId, 'ammo') && ownable.cnt(monsterId)">
       <div class="progress">
         <div role="progressbar"
-             ng-class="getShootingClass(monster.id)"
-             ng-style="{width: getShootingWidth(monster.id) + '%'}"></div>
+             ng-class="shooting.shootingClass(monsterId)"
+             ng-style="{width: shooting.shootingWidth(monsterId) + '%'}"></div>
       </div>
     </span>
-    <span class="buy pull-left">buy {{ maxBuyable(monster.id) || 1 }} for {{ nextPrice(monster.id) | BigPrint }}</span>
+    <span class="buy pull-left">buy {{ buyable.maxBuyable(monsterId) || 1 }} for {{ buyable.priceOfNext(monsterId) | BigPrint }}</span>
   </button>
 </div>
 
-<button class="cycle half center-block btn btn-info" ng-click="cycleBuyAtOnce()">
-  BUY<span class="badge pull-right">{{ buyAtOnce ? buyAtOnce : 'max' }}</span>
+<button class="cycle half center-block btn btn-info" ng-click="buyable.cycleBuyAtOnce()">
+  BUY<span class="badge pull-right">{{ buyable.buyAtOnce ? buyable.buyAtOnce : 'max' }}</span>
 </button>

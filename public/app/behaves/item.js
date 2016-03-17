@@ -40,4 +40,38 @@ angular.module('BehavesItem', [])
 
         }
     ])
+    .service('BehavesItemController', [
+        '$injector',
+        function($injector) {
+
+            return function(obj, def) {
+
+                var Service = $injector.get(def.module),
+                    returnCnt = function(cnt) {
+                        return cnt;
+                    },
+                    replaceLabel = function(id, cnt, raw) {
+                        var labelFn = Service.data(['defs', id, 'labelFn'])
+                            || def.behaves.Item.labelFn
+                            || returnCnt;
+                        return raw.replace('{{label}}', labelFn(cnt));
+                    };
+
+                return angular.extend(obj, {
+                    item: {
+                        label: function(id, key, cnt) {
+                            return replaceLabel(id, cnt, Service.data(['defs', id, key]));
+                        },
+                        name: function(id) {
+                            return Service.data(['defs', id, 'name']);
+                        },
+                        data: function(id, path) {
+                            return Service.data('defs.' + id + '.' + path);
+                        }
+                    }
+                });
+
+            }
+        }
+    ])
 ;

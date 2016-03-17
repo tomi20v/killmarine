@@ -1,35 +1,35 @@
 <div class="upgrades-container btn-group-vertical full" role="group">
   <span class="list-group-item active">
     <div class="btn-group">
-      <button ng-click="setActiveTab('available')"
+      <button ng-click="hasTabs.setActiveTab('available')"
               class="btn btn-primary">available</button>
-      <button ng-click="setActiveTab('owned')"
-              class="btn btn-primary">owned ({{ items.owned().length }})</button>
+      <button ng-click="hasTabs.setActiveTab('owned')"
+              class="btn btn-primary">owned ({{ ownable.cntDistinct() }})</button>
     </div>
-    <button ng-if="isActiveTab('available')"
+    <button ng-if="hasTabs.isActiveTab('available')"
             ng-disabled="!buyable.canBuyAll()"
             ng-click="buyable.buyAll()"
             class="btn btn-default pull-right">buy all for {{ buyable.priceOfAll() | BigPrint}}</button>
   </span>
-  <span ng-if="isActiveTab('available')">
-    <button ng-repeat="upgradeId in items.available()"
-            ng-disabled="!buyable.canBuy(upgradeId, 1)"
+  <span ng-if="hasTabs.isActiveTab('available')">
+    <button ng-repeat="upgradeId in available.ids()"
+            ng-disabled="!buyable.canBuyNext(upgradeId)"
             ng-click="buyable.buy(upgradeId, 1)"
             class="full btn btn-default list-group-item">
-      <span class="name">{{ items.name(upgradeId, 1) }}
-        <small ng-if="buyable.canBuy(upgradeId, 1)">{{ items.description(upgradeId) }}</small>
+      <span class="name">{{ item.label(upgradeId, 'name', 1) }}
+        <small ng-if="buyable.canBuy(upgradeId, 1)">{{ item.label(upgradeId, 'description') }}</small>
       </span>
       <span class="price">buy for {{ buyable.priceOfNext(upgradeId, 1) | BigPrint}}</span>
     </button>
   </span>
-  <span ng-if="isActiveTab('owned')">
-    <button ng-repeat="upgradeId in items.owned()"
+  <span ng-if="hasTabs.isActiveTab('owned')">
+    <button ng-repeat="upgradeId in ownable.ownedIds()"
             disabled
             class="full btn btn-default list-group-item">
-      <span class="name">{{ items.name(upgradeId, 0) }}
-        <small>{{ items.description(upgradeId) }}</small>
+      <span class="name">{{ item.label(upgradeId, 'name', 0) }}
+        <small>{{ item.label(upgradeId, 'description', 0) }}</small>
       </span>
-      <span class="price">bought at {{ buyable.lastBuy(upgradeId) | TimePrint }}</span>
+      <span class="price">bought at {{ ownable.lastOwn(upgradeId) | TimePrint }}</span>
     </button>
   </span>
 </div>

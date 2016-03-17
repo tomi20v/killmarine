@@ -13,49 +13,39 @@ angular.module('BehavesBuyable', ['Meta'])
      */
     .service('BehavesBuyableLogic', [
         '$injector',
+        '$rootScope',
+        '$timeout',
         'Util',
+        'UtilMath',
         'Meta',
         'BehavesBuyableHelper',
-        function($injector, Util, Meta, BehavesBuyableHelper) {
+        function(
+            $injector, $rootScope, $timeout,
+            Util, UtilMath, Meta,
+            BehavesBuyableHelper
+        ) {
 
             return function(obj, def, a) {
 
-                var DataService = $injector.get(def.module + 'Data'),
+                var Service = $injector.get(def.module),
+                    DataService = $injector.get(def.module + 'Data'),
                     ResourceService = $injector.get(def.behaves.Buyable.resource.module),
-                    buy = function(id, cnt, succesCallback) {
+                    buy = function(id, cnt, successCallback) {
 
                         var price = obj.priceOfNext(id, cnt),
-                            resourceModule = def.behaves.Buyable.resource;
+                            resource = def.behaves.Buyable.resource;
 
                         // I'm not sure why but I have to timeout this $emit otherwise angular.forEach()
                         //      breaks in caller method (WTF)
                         $timeout(function() {
-                            $rootScope.$emit(resourceModule + '.spend', {
+                            $rootScope.$emit(resource.module + '.spend', {
                                 spend: {
-                                    id: def.behaves.Buyable.resource.id,
+                                    id: resource.id,
                                     cnt: price
                                 },
                                 success: function () {
 
-                                    DataService.topsAdd(['owned', id], cnt);
-                                    DataService.topsAdd('ownedAll', cnt);
-                                    if (!DataService.firstBuy[id]) {
-                                        DataService.firstBuy[id] = Meta.data('playTime');
-                                    }
-                                    DataService.lastBuy[id] = Meta.data('playTime');
-
-                                    if (angular.isFunction(DataService.defs[id].success)) {
-                                        DataService.defs[id].success($rootScope);
-                                    }
-
-                                    succesCallback();
-
-                                    $rootScope.$emit(def.module + '.bought', {
-                                        id: id,
-                                        cnt: cnt
-                                    });
-
-                                    obj.refresh();
+                                    LogicService.got(id, cnt, successCallback);
 
                                 }
                             });
@@ -65,6 +55,10 @@ angular.module('BehavesBuyable', ['Meta'])
 
                 return Util.extendWithWrap(obj, {
                     priceOfNext: function(id, cnt) {
+                        if (!DataService.defs[id]) {
+                            console.log('jajj', DataService, id);
+                            return null;
+                        }
                         return BehavesBuyableHelper.nextPrice(
                             DataService.owned[id],
                             DataService.defs[id].price,
@@ -86,8 +80,42 @@ angular.module('BehavesBuyable', ['Meta'])
                         }
                         return true;
                     },
-                    buy: function(id, cnt, callback) {
-                        buy(id, cnt, callback);
+                    priceOfMaxBuyable: function(id) {
+                        var cnt = this.maxBuyable(id);
+                        return this.priceOfNext(id, cnt);
+                    },
+                    maxBuyable: function(id) {
+                        var owned = Service.data(['owned', id]),
+                            price = Service.data(['defs', id, 'price', 'base']),
+                            q = Service.data(['defs', id, 'price', 'q']),
+                            ownedPrice = UtilMath.sumGeoSeq(price, q, owned),
+                            ownedResource = ResourceService.data(['owned', def.behaves.Buyable.resource.id]);
+                        return UtilMath.seqNBySum(ownedPrice + ownedResource, price, q) - owned;
+                    },
+                    buy: function(id, cnt, successCallback) {
+                        var price = obj.priceOfNext(id, cnt),
+                            resource = def.behaves.Buyable.resource;
+
+                        // I'm not sure why but I have to timeout this $emit otherwise angular.forEach()
+                        //      breaks in caller method (WTF)
+                        $timeout(function() {
+                            $rootScope.$emit(resource.module + '.spend', {
+                                spend: {
+                                    id: resource.id,
+                                    cnt: price
+                                },
+                                success: function () {
+
+                                    //this.got(id, cnt, successCallback);
+                                    $rootScope.$emit(def.module + '.got', {
+                                        id: id,
+                                        cnt: cnt,
+                                        successCallback: successCallback
+                                    });
+
+                                }
+                            });
+                        })
                     },
                     buyAll: function(id, callback) {
                         console.log('TODO IMPLEMENT buyall()')
@@ -111,12 +139,127 @@ angular.module('BehavesBuyable', ['Meta'])
                     return Math.floor(priceWithNextCnt - priceOfowned);
                 },
                 maxBuyable: function(owned, buyable) {
-                    var price = buyable.price,
-                        q = buyable.q,
-                        ownedPrice = UtilMath.sumGeoSeq(price, q, owned);
-                    return UtilMath.seqNBySum(ownedPrice + Player.data('frags'), price, q) - owned;
+                    // @todo abstract code here
                 }
             };
+
+        }
+    ])
+    .service('BehavesBuyableController', [
+        '$injector',
+        '$rootScope',
+        function($injector, $rootScope) {
+
+            return function(obj, def) {
+
+                var LogicService = $injector.get(def.module + 'Logic'),
+                    Service = $injector.get(def.module),
+                    ResourceService = $injector.get(def.behaves.Buyable.resource.module),
+                    buyStrategy = {
+                        maxBuyable: function(id, cnt) {
+                            return cnt;
+                        },
+                        nextPrice: function(id, cnt) {
+                            return LogicService.priceOfNext(id, cnt);
+                        },
+                        canBuyNext: function(id, cnt) {
+                            var nextPrice = this.nextPrice(id, cnt);
+                            return nextPrice && (nextPrice <= ResourceService.canSpend(
+                                    def.behaves.Buyable.resource.id,
+                                    cnt
+                                )
+                            );
+                        },
+                        buy: function(id, cnt, callback) {
+                            return LogicService.buy(id, cnt, callback);
+                        }
+                    },
+                    buyMaxStrategy = angular.extend({}, buyStrategy, {
+                        maxBuyable: function(id, cnt) {
+                            return LogicService.maxBuyable(id);
+                        },
+                        nextPrice: function(id) {
+                            return LogicService.priceOfNext(id) || LogicService.priceOfNext(id, 1);
+                        },
+                        buy: function(id, cnt, callback) {
+                            return LogicService.buy(id, this.maxBuyable(id), callback);
+                        }
+                    });
+
+                return angular.extend(obj, {
+                    buyable: {
+                        buyAtOnce: 1,
+                        strategy: buyStrategy,
+                        cycleBuyAtOnce: function() {
+                            switch (this.buyAtOnce) {
+                                case 100:
+                                    this.buyAtOnce = 0;
+                                    this.strategy = buyMaxStrategy;
+                                    break;
+                                case 0:
+                                    this.buyAtOnce = 1;
+                                    this.strategy = buyStrategy;
+                                    break;
+                                default:
+                                    this.buyAtOnce*= 10;
+                            }
+                            $rootScope.$emit('Meta.usefulClick');
+                        },
+                        // normal buy, buy as many as specified incurrent buyAtOnce
+                        canBuyNext: function(id) {
+                            return this.strategy.canBuyNext(id, this.buyAtOnce);
+                        },
+                        maxBuyable: function(id) {
+                            return this.strategy.maxBuyable(id, this.buyAtOnce);
+                        },
+                        priceOfNext: function(id) {
+                            return this.strategy.nextPrice(id, this.buyAtOnce);
+                        },
+                        buy: function(id) {
+                            this.strategy.buy(
+                                id,
+                                this.buyAtOnce,
+                                angular.bind($rootScope, $rootScope.$emit, 'Meta.usefulClick')
+                            );
+                        },
+                        // buy all - buy all available at once
+                        canBuyAll: function() {
+                            var allPrice = this.priceOfAll();
+                            return allPrice && ResourceService.canSpend()
+                        },
+                        priceOfAll: function() {
+                            var allPrice = 0;
+                            //angular.forEach(UpgradesData.available, function(upgradeId) {
+                            angular.forEach(Service.data('available'), function(availableCnt, id) {
+                            //    allPrice+= UpgradesLogic.nextPrice(upgradeId);
+                                allPrice+= LogicService.priceOfNext(id, availableCnt);
+                            });
+                            return allPrice;
+                        },
+                        buyAll: function() {
+                            console.log('@TODO buyAll');
+                        },
+                        // buy each - buy one of each available at once
+                        canBuyEach: function() {
+                            var priceOfEach = this.priceOfEach();
+                            return  priceOfEach && ResourceService.canSpend(def.behaves.buyable.resource.id, priceOfEach);
+                        },
+                        priceOfEach: function() {
+                            var price = 0;
+                            angular.forEach(Service.data('available'), function(availableCnt, id) {
+                                if (availableCnt) {
+                                    price += LogicService.priceOfNext(id, 1);
+                                }
+                            });
+                            return price;
+                        },
+                        buyEach: function() {
+                            console.log('@TODO buyEach');
+                        }
+                    }
+                })
+
+            }
 
         }
     ])

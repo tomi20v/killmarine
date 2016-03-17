@@ -2,6 +2,7 @@ angular.module('Behaves', [
     'BehavesAll',
     'BehavesAvailable',
     'BehavesBuyable',
+    'BehavesHasTabs',
     'BehavesItem',
     'BehavesOwnable',
     'BehavesPersisted',
@@ -43,14 +44,60 @@ angular.module('Behaves', [
         'BehavesHelper',
         function(BehavesHelper) {
 
+            var eventUnBinds = {};
+
             return {
-                build: function (def, type, obj) {
+                /**
+                 * I build a service of type <type>. will apply all Behaves*Type builders
+                 */
+                build: function(def, type, obj) {
                     var builders = BehavesHelper.getBuilders(def.behaves, type);
                     obj = obj || {};
                     angular.forEach(builders, function (eachBuilder) {
                         obj = eachBuilder(obj, def);
                     });
                     return obj;
+                },
+                /**
+                 * I add one mixin to obj. The mixin to use is Behaves<key><type>
+                 */
+                mixin:function(def, key, obj) {
+                    // this shall fail if  invalid mixin specified
+                    var builder = BehavesHelper.get(key, '');
+                    obj = obj || {};
+                    return builder(obj, def);
+                },
+                run: function(def) {
+                    var runs = BehavesHelper.getBuilders(def.behaves, 'Run');
+                    angular.forEach(runs, function(run) {
+                        run(def);
+                    });
+                },
+                bindControllerListeners: function(scope, listeners) {
+
+                    // this code is left here so if I'd ever need bindindgs for a controller,
+                    // those should be done by this binder
+                    // actually this code should be somewhere else?
+                    //
+                    //    var id = scope.id;
+                    //
+                    //    eventUnBinds[id] = [];
+                    //
+                    //    angular.forEach(listeners, function(listener) {
+                    //        var boundListener = angular.bind(scope, listener[1]),
+                    //            unBindFn = $rootScope.$on(listener[0], boundListener);
+                    //        //var boundListener = function(event, eventData) { listener[1](event, eventData); },
+                    //        //    unBindFn = $rootScope.$on(listener[0], boundListener);
+                    //        eventUnBinds[id].push(unBindFn);
+                    //    });
+                    //
+                    //    scope.$on('$destroy', function() {
+                    //        angular.forEach(eventUnBinds[id], function(fn) { fn() });
+                    //        delete eventUnBinds[id];
+                    //    });
+                    //
+                    //}
+
                 }
             }
 

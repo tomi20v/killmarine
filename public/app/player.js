@@ -1,3 +1,4 @@
+// @todo this module is useless, backpack should be abstracted out and this removed
 angular.module('Player', [
     'Saver',
     'Util',

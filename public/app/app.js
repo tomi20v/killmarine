@@ -15,33 +15,39 @@ var app = angular.module('App', [
 ]);
 
 app
-    .config(['$provide', function ($provide) {
-        $provide.decorator('$rootScope', function ($delegate) {
-            var _emit = $delegate.$emit;
+    .config([
+        '$provide',
+        function ($provide) {
+            $provide.decorator('$rootScope', function ($delegate) {
+                var _emit = $delegate.$emit;
 
-            $delegate.$emit = function () {
-                if (arguments[0] == 'Ticker.tick') {
-                    console.log('TIck');
-                }
-                else {
-                    console.log('EVENT: ', arguments);
-                }
-                _emit.apply(this, arguments);
-            };
+                $delegate.$emit = function () {
+                    if (arguments[0] == 'Ticker.tick') {
+                        console.log('TIck');
+                    }
+                    else {
+                        console.log('EVENT: ', arguments);
+                    }
+                    _emit.apply(this, arguments);
+                };
 
-            return $delegate;
-        });
-    }])
+                return $delegate;
+            });
+        }
+    ])
     .controller('AppController', [
         '$scope',
         '$rootScope',
-        'UtilBoot',
+        'Behaves',
         'Frags',
-        function($scope, $rootScope, UtilBoot, Frags) {
+        function($scope, $rootScope, Behaves, Frags) {
 
-            angular.extend($scope, UtilBoot.activeTabMixin(), {
-                activeTab: 'scoreboard',
-                activeTab: 'upgrades',
+            Behaves.mixin(null, 'HasTabsController', $scope);
+            angular.merge($scope, {
+                hasTabs: {
+                    activeTab: 'scoreboard',
+                    activeTab: 'upgrades'
+                },
                 fps: 0,
                 ticks: 0,
                 getFrags: function() {

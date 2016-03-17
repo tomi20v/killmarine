@@ -1,18 +1,24 @@
 angular.module('BehavesTops', ['Util'])
     .service('BehavesTopsData', [
-        'UtilData',
-        'BehavesTopsStrategies',
-        function(UtilData, BehavesTopsStrategies) {
+        'Util',
+        function(Util) {
 
             return function(obj, def) {
 
-                var strategy = def.behaves.Tops.sum
-                    ? BehavesTopsStrategies.buildTopSum
-                    : BehavesTopsStrategies.buildTop;
-
-                obj = strategy(obj, obj.saveFields);
+                var cpy;
 
                 obj.saveFields = obj.saveFields || [];
+                cpy = Util.copyProps(obj, obj.saveFields);
+
+                angular.extend(obj, {
+                    tops: {
+                        top: angular.copy(cpy),
+                        total: angular.copy(cpy),
+                        thisGameSum: angular.copy(cpy),
+                        anyGameSum: cpy
+                    }
+                });
+
                 obj.saveFields.push('tops');
 
                 return obj;
@@ -21,54 +27,59 @@ angular.module('BehavesTops', ['Util'])
 
         }
     ])
+    .service('BehavesTopsLogic', [
+        '$injector',
+        'Util',
+        'UtilData',
+        'BehavesTopsStrategies',
+        function($injector, Util, UtilData, BehavesTopsStrategies) {
+
+            return function(obj, def) {
+
+                var DataService = $injector.get(def.module + 'Data'),
+                    strategy = def.behaves.Tops.sum
+                        ? BehavesTopsStrategies.topsAddSum
+                        : BehavesTopsStrategies.topsAdd;
+
+                return Util.extendWithWrap(obj, {
+                    topsAdd: function(index, cnt) {
+                        return strategy(DataService, index, cnt);
+                    },
+                    extendableGot: function(prevGot, id, cnt) {
+
+                        this.topsAdd(['owned', id], cnt);
+                        this.topsAdd('ownedAll', cnt);
+
+                    }
+                });
+
+            }
+
+        }
+    ])
+    // I've kept them separate and reachable for testing
     .service('BehavesTopsStrategies', [
         'Util',
         function(Util) {
 
             return {
-                buildTopSum: function(data, whitelist) {
-                    var cpy = Util.copyProps(data, whitelist);
-                    angular.extend(data, {
-                        tops: {
-                            top: angular.copy(cpy),
-                            total: angular.copy(cpy),
-                            thisGameSum: angular.copy(cpy),
-                            anyGameSum: cpy
-                        },
-                        topsAdd: function(index, value) {
-                            value = value || 0;
-                            var newVal = Util.deepAddMin(this, index, value, 0),
-                            // max in any game
-                                newTop = Util.deepSetMax(this.tops.top, index, newVal),
-                            // sum/gained this game
-                                newSum = Util.deepAddMin(this.tops.thisGameSum, index, value, newVal),
-                            // max gained in any game
-                                newAnyGameSum = Util.deepSetMax(this.tops.anyGameSum, index, newSum),
-                            // all gained total
-                            //newTotalSum = Util.deepAddMin(this.tops.total, index, value, newAnyGameSum);
-                                newTotalSum = Util.deepAddMin(this.tops.total, index, value, 0);
-                        }
-                    });
-                    return data;
+                topsAdd: function(data, index, value) {
+                    value = value || 0;
+                    var newVal = Util.lookUp(data, index),
+                    // max in any game
+                        newTop = Util.deepSetMax(data.tops.top, index, newVal),
+                    // sum/gained this game
+                        newSum = Util.deepAddMin(data.tops.thisGameSum, index, value, newVal),
+                    // max gained in any game
+                        newAnyGameSum = Util.deepSetMax(data.tops.anyGameSum, index, newSum),
+                    // all gained total
+                        newTotalSum = Util.deepAddMin(data.tops.total, index, value, 0);
                 },
-                buildTop: function(data, whitelist) {
-                    var cpy = Util.copyProps(data, whitelist);
-                    angular.extend(data, {
-                        tops: {
-                            top: angular.copy(cpy),
-                            total: angular.copy(cpy),
-                            thisGameSum: angular.copy(cpy),
-                            anyGameSum: cpy
-                        },
-                        topsAdd: function(index, value) {
-                            value = value || 0;
-                            var newVal = Util.deepAdd(this, index, value),
-                                t = Util.deepSetMax(this.tops.top, index, newVal);
-                            Util.deepAddMin(this.tops.total, index, value, t);
-                            return newVal;
-                        }
-                    });
-                    return data;
+                topsAddSum: function(data, index, value) {
+                    value = value || 0;
+                    var newVal = Util.lookUp(data, index),
+                        t = Util.deepSetMax(data.tops.top, index, newVal);
+                    Util.deepAddMin(data.tops.total, index, value, t);
                 }
             }
 

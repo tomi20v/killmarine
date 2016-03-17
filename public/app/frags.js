@@ -43,8 +43,7 @@ angular.module('Frags', ['Behaves'])
     .service('FragsLogic', [
         'Behaves',
         'FragsDef',
-        'FragsData',
-        function(Behaves, FragsDef, FragsData) {
+        function(Behaves, FragsDef) {
 
             return Behaves.build(FragsDef, 'Logic', {
                 onMarineDie: function(event, eventData) {
@@ -52,8 +51,7 @@ angular.module('Frags', ['Behaves'])
                     // @todo I should receive many frags depending on player level?
                     var frags = 1;
 
-                    FragsData.topsAdd('owned.frag', frags);
-                    FragsData.topsAdd('ownedAll', frags);
+                    this.got('frag', frags);
 
                 }
             });
@@ -62,9 +60,15 @@ angular.module('Frags', ['Behaves'])
     ])
     .run([
         '$rootScope',
+        'Behaves',
+        'FragsDef',
         'FragsLogic',
-        function($rootScope, FragsLogic) {
+        function($rootScope, Behaves, FragsDef, FragsLogic) {
+
+            Behaves.run(FragsDef);
+
             $rootScope.$on('Marine.die', angular.bind(FragsLogic, FragsLogic.onMarineDie));
+
         }
     ])
 ;

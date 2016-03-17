@@ -1,6 +1,6 @@
 angular.module('Scoreboard', [])
     .controller('ScoreboardController', function(
-        $scope, Util, UtilBoot, Player, Monsters, Upgrades, Meta
+        $scope, Util, Player, Monsters, Upgrades, Meta
     ) {
 
         angular.merge($scope, {
@@ -19,7 +19,7 @@ angular.module('Scoreboard', [])
             }
         });
         // could help later on perfomance if needed
-        //UtilBoot.bindControllerListeners($scope, [
+        //Behaves.bindControllerListeners($scope, [
         //    ['Ticker.tick', $scope.onTick]
         //]);
 
