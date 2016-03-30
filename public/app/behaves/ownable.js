@@ -82,7 +82,6 @@ angular.module('BehavesOwnable', [])
 
                     },
                     onGot: function(event, eventData) {
-                        console.log('onGot', eventData);
                         this.got(eventData.id, eventData.cnt, eventData.successCallback);
                     },
                     onResetOwned: function(event, eventData) {

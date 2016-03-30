@@ -8,9 +8,9 @@
     </li>
     <li class="list-group-item">
       <span class="c0">Frags:</span>
-      <span class="c1 pre">{{ player('frags') | BigPrint }}</span>
-      <span class="c1 pre">{{ player('tops.top.frags') | BigPrint }}</span>
-      <span class="c1 pre">{{ player('tops.total.frags') | BigPrint }}</span>
+      <span class="c1 pre">{{ frags('owned.frag') | BigPrint }}</span>
+      <span class="c1 pre">{{ frags('tops.top.owned.frag') | BigPrint }}</span>
+      <span class="c1 pre">{{ frags('tops.total.owned.frag') | BigPrint }}</span>
     </li>
     <li class="list-group-item">
       <span class="c0">Fps:</span>
@@ -25,9 +25,9 @@
     </li>
     <li class="list-group-item">
       <span class="c0">Frags by monsters:</span>
-      <span class="c1 pre">{{ monsters('frags.byMonstersAll') | BigPrint }}</span>
+      <span class="c1 pre">{{ monsters(['frags','byMonstersAll']) | BigPrint }}</span>
       <span class="c1 pre">{{ monsters('tops.top.frags.byMonstersAll') | BigPrint }}</span>
-      <span class="c1 pre">{{ monsters('tops.total.frags.byMonstersAll') | BigPrint }}</span>
+      <span class="c1 pre">{{ monstersx('tops.total.frags.byMonstersAll') | BigPrint }}</span>
     </li>
     <!--<li class="list-group-item">-->
       <!--<span class="c0">Monsters:</span>-->

@@ -57,7 +57,7 @@ angular.module('BehavesTops', ['Util'])
 
         }
     ])
-    // I've kept them separate and reachable for testing
+    // I've kept them separate and reachable to be testable
     .service('BehavesTopsStrategies', [
         'Util',
         function(Util) {

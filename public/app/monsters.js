@@ -14,9 +14,7 @@ angular.module('Monsters')
         'MonstersDef',
         function(Util, Behaves, MonstersDef) {
 
-            var builder = Behaves.build(MonstersDef, 'Builder');
-
-            return Util.extendWithWrap(builder, {
+            return Behaves.build(MonstersDef, 'Builder', {
                 build: function(data) {
                     return angular.extend(data, {
                         frags: {
@@ -25,44 +23,13 @@ angular.module('Monsters')
                             byMonstersShoot: 0,
                             byMonsters: {},
                             byMarineFrags: 0
-                        }
+                        },
+                        saveFields: [
+                            'frags'
+                        ]
                     })
                 }
             });
-
-            //var monsterBuilder = function(monster) {
-            //    var buyable = monster.buyable;
-            //    angular.extend(monster, {
-            //        buyable: function() {
-            //            return buyable;
-            //        }
-            //    });
-            //
-            //    return monster;
-            //};
-            //
-            //return function(data) {
-            //    angular.merge(data, {
-            //        owned: {},
-            //        ownedAll: 0,
-            //        // these are cached values, no need to save unless plan changes
-            //        defs: {},
-            //        frags: {
-            //            byMonstersAll: 0,
-            //            byMonstersHit: 0,
-            //            byMonstersShoot: 0,
-            //            byMonsters: {},
-            //            byMarineFrags: 0
-            //        }
-            //    });
-            //    angular.forEach(MonstersDef.monsters, function(monster) {
-            //        var monsterCpy = angular.extend({}, MonstersDef.monsterProto, monster);
-            //        data.owned[monster.id] = 0;
-            //        data.defs[monster.id] = monsterBuilder(monsterCpy);
-            //        data.frags.byMonsters[monster.id] = 0;
-            //    });
-            //    return data;
-            //}
 
         }
     ])
