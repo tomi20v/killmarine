@@ -1,18 +1,16 @@
 angular.module('BehavesSpendable', [])
     .service('BehavesSpendableService', [
-        'BehavesSpendableHelper',
+        '$injector',
         'Util',
-        function(BehavesSpendableHelper, Util) {
+        function($injector, Util) {
 
             return function(obj, def) {
 
+                var LogicService = $injector.get(def.module + 'Logic');
+
                 return Util.extendWithWrap(obj, {
                     canSpend: function(id, cnt) {
-                        return BehavesSpendableHelper.canSpend(
-                            this.data(['owned', id]),
-                            id,
-                            cnt
-                        );
+                        return LogicService.canSpend(id, cnt);
                     }
                 })
 
@@ -23,8 +21,7 @@ angular.module('BehavesSpendable', [])
     .service('BehavesSpendableLogic', [
         '$injector',
         'Util',
-        'BehavesSpendableHelper',
-        function($injector, Util, BehavesSpendableHelper) {
+        function($injector, Util) {
 
             return function(obj, def) {
 
@@ -32,11 +29,8 @@ angular.module('BehavesSpendable', [])
 
                 return Util.extendWithWrap(obj, {
                     canSpend: function(id, cnt) {
-                        return BehavesSpendableHelper.canSpend(
-                            this.data(['owned', id]),
-                            id,
-                            cnt
-                        );
+                        var owned = DataService.owned[id] || 0;
+                        return owned && (owned >= cnt);
                     },
                     onSpend: function(event, eventData) {
                         var spend = eventData.spend;
@@ -66,17 +60,6 @@ angular.module('BehavesSpendable', [])
 
                 $rootScope.$on(def.module + '.spend', angular.bind(LogicService, LogicService.onSpend));
 
-            }
-
-        }
-    ])
-    .service('BehavesSpendableHelper', [
-        function() {
-
-            return {
-                canSpend: function(owned, id, cnt) {
-                    return owned && (owned >= cnt);
-                }
             }
 
         }

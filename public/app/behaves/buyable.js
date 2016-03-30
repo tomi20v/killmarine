@@ -164,11 +164,10 @@ angular.module('BehavesBuyable', ['Meta'])
                         },
                         canBuyNext: function(id, cnt) {
                             var nextPrice = this.nextPrice(id, cnt);
-                            return nextPrice && (nextPrice <= ResourceService.canSpend(
+                            return nextPrice && ResourceService.canSpend(
                                     def.behaves.Buyable.resource.id,
-                                    cnt
-                                )
-                            );
+                                    nextPrice
+                                );
                         },
                         buy: function(id, cnt, callback) {
                             return LogicService.buy(id, cnt, callback);
