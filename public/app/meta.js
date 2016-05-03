@@ -1,9 +1,16 @@
 angular.module('Meta', ['Util'])
-    .service('Meta', function(UtilData, MetaData) {
-
-        return UtilData.buildDataGetterService(MetaData);
-
+    .constant('MetaDef', {
+        module: 'Meta'
     })
+    .service('Meta', [
+        'Behaves',
+        'MetaDef',
+        function(Behaves, MetaDef) {
+
+            return Behaves.build(MetaDef, 'Service');
+
+        }
+    ])
     .service('MetaData', function(UtilData, MetaLoader) {
 
         var data = {

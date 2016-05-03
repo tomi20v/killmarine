@@ -62,7 +62,6 @@ angular.module('Player', [
 
             },
             onTick: function(event, tick) {
-                PlayerData.topsAdd('frags', tick.frags.total);
                 PlayerData.topsAdd('backpack', tick.backpack);
             }
         };

@@ -53,6 +53,11 @@ angular.module('Frags', ['Behaves'])
 
                     this.got('frag', frags);
 
+                },
+                onTick: function(event, tick) {
+
+                    this.got('frag', tick.frags.total);
+
                 }
             });
 
